@@ -192,10 +192,8 @@ function App() {
 
         <section className="console-grid" id="console">
           <div className="intro-panel">
-            <p className="eyebrow">
-              software engineering review
-            </p>
-            <h1>review software before it reaches production.</h1>
+            <p className="eyebrow">review workspace</p>
+            <h1>production review console.</h1>
             <p className="lede">
               otherend sits above the build process and checks whether the system is secure,
               maintainable, scalable, testable, and ready to ship.
@@ -215,13 +213,13 @@ function App() {
             </div>
           </div>
 
-          <aside className="system-panel" aria-label="platform preview">
+          <aside className="system-panel" aria-label="active review state">
             <div className="live-badge">
               <span>{readinessScore}% readiness</span>
             </div>
             <div className="system-head">
               <p className="eyebrow">active review</p>
-              <h2>engineering gates</h2>
+              <h2>engineering gate status</h2>
             </div>
             <div className="gate-stack">
               {disciplines.slice(0, 4).map((discipline) => {
@@ -449,8 +447,8 @@ function App() {
 
         <section className="ship-panel">
           <div>
-            <p className="eyebrow">launch path</p>
-            <h2>position it as the quality layer for generated software.</h2>
+            <p className="eyebrow">release path</p>
+            <h2>turn fast builds into reviewed software.</h2>
             <p>
               start with review packages, prompt optimization, security gates, and exportable implementation
               briefs. expand into repository scanning, github checks, team policies, and model orchestration.

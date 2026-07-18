@@ -9,10 +9,10 @@
   --muted: #a7adb8;
   --quiet: #747b87;
   --bg: #050505;
-  --panel: #0b0b0c;
-  --panel-soft: #101114;
-  --line: rgba(255, 255, 255, 0.12);
-  --line-strong: rgba(255, 255, 255, 0.22);
+  --panel: #09090a;
+  --panel-soft: #0f1012;
+  --line: rgba(255, 255, 255, 0.105);
+  --line-strong: rgba(255, 255, 255, 0.18);
   --blue: #0872ff;
   --blue-soft: #8fc1ff;
   --silver: #e4e7ec;
@@ -74,7 +74,7 @@ main {
   border: 1px solid #1b1b1d;
   border-radius: 8px;
   background: #000;
-  box-shadow: 0 18px 50px rgba(0, 0, 0, 0.34);
+  box-shadow: 0 16px 42px rgba(0, 0, 0, 0.3);
 }
 
 .brand {
@@ -142,7 +142,7 @@ main {
 
 .console-grid {
   display: grid;
-  grid-template-columns: minmax(0, 0.88fr) minmax(360px, 1.12fr);
+  grid-template-columns: minmax(0, 0.78fr) minmax(380px, 1.22fr);
   gap: 18px;
   align-items: stretch;
   padding: clamp(24px, 5vw, 58px) 0 18px;
@@ -166,14 +166,12 @@ main {
 
 .intro-panel {
   display: flex;
-  min-height: 520px;
+  min-height: 460px;
   flex-direction: column;
   justify-content: flex-end;
   padding: clamp(24px, 4vw, 46px);
   border-color: var(--line-strong);
-  background:
-    linear-gradient(180deg, rgba(8, 114, 255, 0.08), transparent 32%),
-    #070707;
+  background: #070707;
 }
 
 .eyebrow {
@@ -196,8 +194,8 @@ h1 {
   max-width: 820px;
   margin: 0;
   color: var(--ink);
-  font-size: clamp(2.7rem, 5.4vw, 5.6rem);
-  line-height: 0.96;
+  font-size: clamp(2.25rem, 4.2vw, 4.6rem);
+  line-height: 0.98;
   letter-spacing: 0;
 }
 
@@ -293,14 +291,12 @@ h3 {
 .system-panel {
   position: relative;
   display: flex;
-  min-height: 520px;
+  min-height: 460px;
   flex-direction: column;
   justify-content: space-between;
   overflow: hidden;
   padding: clamp(22px, 3vw, 32px);
-  background:
-    linear-gradient(180deg, rgba(255, 255, 255, 0.035), transparent 42%),
-    #050505;
+  background: #050505;
   color: #fff;
 }
 
@@ -312,9 +308,9 @@ h3 {
   align-items: center;
   min-height: 38px;
   padding: 0 12px;
-  border: 1px solid var(--line);
+  border: 1px solid rgba(255, 255, 255, 0.14);
   border-radius: 6px;
-  background: #111216;
+  background: #0f1012;
   color: var(--silver);
   font-weight: 820;
 }
@@ -326,7 +322,7 @@ h3 {
 .gate-stack {
   display: grid;
   gap: 10px;
-  margin-top: 72px;
+  margin-top: 58px;
 }
 
 .gate-stack article {
@@ -337,7 +333,7 @@ h3 {
   min-height: 58px;
   border: 1px solid var(--line);
   border-radius: 6px;
-  background: #101114;
+  background: #0f1012;
   padding: 11px 13px;
 }
 
@@ -359,7 +355,7 @@ h3 {
 .signal-grid div {
   border: 1px solid var(--line);
   border-radius: 6px;
-  background: #101114;
+  background: #0f1012;
   padding: 14px;
 }
 
@@ -403,7 +399,7 @@ h3 {
   margin-top: 16px;
   border: 1px solid var(--line);
   border-radius: 6px;
-  background: #0d0e11;
+  background: #0c0d0f;
   padding: 15px;
 }
 
@@ -488,7 +484,7 @@ textarea {
   width: 100%;
   border: 1px solid var(--line);
   border-radius: 6px;
-  background: #0d0e11;
+  background: #0c0d0f;
   color: var(--ink);
   outline: none;
 }
@@ -555,7 +551,7 @@ textarea:focus {
   place-items: center;
   border: 1px solid var(--line-strong);
   border-radius: 8px;
-  background: #101114;
+  background: #0f1012;
 }
 
 .score-ring div {
@@ -598,7 +594,7 @@ textarea:focus {
   align-items: center;
   border: 1px solid var(--line);
   border-radius: 6px;
-  background: #0d0e11;
+  background: #0c0d0f;
   padding: 10px 12px;
   color: var(--silver);
   font-size: 0.9rem;
@@ -608,7 +604,7 @@ textarea:focus {
 .generated-brief {
   margin-top: 22px;
   border-left: 1px solid var(--line-strong);
-  background: #0b0c0f;
+  background: #090a0c;
   padding: 16px 18px;
 }
 
@@ -646,7 +642,7 @@ textarea:focus {
   grid-template-columns: minmax(0, 1fr) auto;
   align-items: center;
   gap: 12px;
-  min-height: 104px;
+  min-height: 96px;
   border: 1px solid var(--line);
   border-radius: 8px;
   background: var(--panel);
@@ -659,7 +655,7 @@ textarea:focus {
 .discipline-card:hover,
 .discipline-card.is-active {
   border-color: rgba(8, 114, 255, 0.62);
-  background: #101318;
+  background: #0f1217;
 }
 
 .discipline-card strong,
@@ -697,7 +693,7 @@ textarea:focus {
   min-height: 56px;
   border: 1px solid var(--line);
   border-radius: 6px;
-  background: #0d0e11;
+  background: #0c0d0f;
   padding: 10px 12px;
 }
 
@@ -732,7 +728,7 @@ textarea:focus {
 .risk-item {
   border: 1px solid var(--line);
   border-radius: 6px;
-  background: #0d0e11;
+  background: #0c0d0f;
   padding: 16px;
 }
 
@@ -785,7 +781,7 @@ textarea:focus {
 }
 
 .artifact-card {
-  min-height: 210px;
+  min-height: 196px;
   padding: 18px;
 }
 
@@ -800,12 +796,12 @@ textarea:focus {
 }
 
 .database-grid article {
-  min-height: 190px;
+  min-height: 176px;
   padding: 18px;
 }
 
 .standards-grid article {
-  min-height: 164px;
+  min-height: 152px;
   padding: 18px;
 }
 
@@ -833,7 +829,7 @@ textarea:focus {
 
   .intro-panel,
   .system-panel {
-    min-height: 430px;
+    min-height: 400px;
   }
 
   .discipline-strip,
@@ -895,7 +891,7 @@ textarea:focus {
 
   .intro-panel,
   .system-panel {
-    min-height: 390px;
+    min-height: 360px;
   }
 
   .signal-grid,
@@ -912,7 +908,7 @@ textarea:focus {
   }
 
   h1 {
-    font-size: clamp(2.65rem, 14vw, 4.4rem);
+    font-size: clamp(2.35rem, 12vw, 3.8rem);
   }
 
   .review-header,
