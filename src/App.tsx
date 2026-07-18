@@ -69,6 +69,7 @@ function App() {
   const [guideStep, setGuideStep] = useState(0);
   const [tier, setTier] = useState<"free" | "paid">("free");
   const [codeScan, setCodeScan] = useState<CodeScan | null>(null);
+  const [repoUrl, setRepoUrl] = useState("");
 
   const selected = disciplines.find((discipline) => discipline.id === activeDiscipline) ?? disciplines[0];
 
@@ -200,6 +201,28 @@ function App() {
     }
   }
 
+  async function downloadCorrectedPackage() {
+    try {
+      if (!projectId) {
+        setStatus("run a paid otai review first. then the corrected package can be downloaded.");
+        return;
+      }
+      const response = await api(`/api/projects/${projectId}/package`, {
+        headers: { accept: "application/zip" },
+      });
+      const blob = await response.blob();
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.href = url;
+      link.download = "otherend-corrected-package.zip";
+      link.click();
+      URL.revokeObjectURL(url);
+      setStatus("corrected package downloaded. it contains otai's safer approach, checklist, and build prompt.");
+    } catch (error) {
+      setStatus(error instanceof Error ? error.message : "corrected package download failed");
+    }
+  }
+
   async function copyPrompt() {
     const prompt =
       serverReview?.implementationPrompt ||
@@ -231,6 +254,20 @@ function App() {
       setStatus(`code scan ready. otai found ${response.scan.fileCount} files and ${response.scan.warnings.length} warning areas.`);
     } catch (error) {
       setStatus(error instanceof Error ? error.message : "zip scan failed");
+    }
+  }
+
+  async function scanGithubRepo() {
+    try {
+      setStatus("otai is downloading the public github repo for review...");
+      const response = await api("/api/github-scan", {
+        method: "POST",
+        body: JSON.stringify({ repoUrl }),
+      }).then((bodyResponse) => bodyResponse.json());
+      setCodeScan(response.scan);
+      setStatus(`github scan ready. otai found ${response.scan.fileCount} files and ${response.scan.warnings.length} warning areas.`);
+    } catch (error) {
+      setStatus(error instanceof Error ? error.message : "github scan failed");
     }
   }
 
@@ -433,13 +470,22 @@ function App() {
             <div className="upload-panel">
               <div>
                 <span>optional code review</span>
-                <strong>upload a zip if you already have code</strong>
-                <p>otai reads the project structure, finds backend/database/security signals, and adds them to the review.</p>
+                <strong>upload a zip or scan a public github repo</strong>
+                <p>otai reads project structure, finds backend/database/security signals, and adds them to the review. your code is reviewed for guidance, not published.</p>
               </div>
               <label className="file-action">
                 choose zip
                 <input type="file" accept=".zip,application/zip" onChange={(event) => scanZip(event.target.files?.[0] || null)} />
               </label>
+              <div className="repo-action">
+                <input
+                  aria-label="public github repo url"
+                  value={repoUrl}
+                  onChange={(event) => setRepoUrl(event.target.value)}
+                  placeholder="https://github.com/owner/repo"
+                />
+                <button type="button" onClick={scanGithubRepo}>scan github</button>
+              </div>
               {codeScan && (
                 <div className="scan-result">
                   <strong>{codeScan.fileName}</strong>
@@ -452,11 +498,11 @@ function App() {
             <div className="tier-panel" aria-label="review tier">
               <button className={tier === "free" ? "is-selected" : ""} type="button" onClick={() => setTier("free")}>
                 <strong>free review</strong>
-                <span>find risks, missing pieces, and what to fix before launch.</span>
+                <span>3 reviews per month. idea, zip, or public github review with risks and fixes.</span>
               </button>
               <button className={tier === "paid" ? "is-selected" : ""} type="button" onClick={() => setTier("paid")}>
-                <strong>paid otai draft</strong>
-                <span>draft the corrected approach, safer plan, tests, and build prompt.</span>
+                <strong>pro otai draft</strong>
+                <span>unlimited reviews, corrected approach, safer plan, tests, build prompt, and package download.</span>
               </button>
             </div>
             <button className="billing-action" type="button" onClick={startPaidCheckout}>
@@ -469,6 +515,9 @@ function App() {
               </button>
               <button onClick={runServerReview} title="save this project and generate the engineering review">
                 save and check
+              </button>
+              <button onClick={downloadCorrectedPackage} title="download the paid corrected package as a zip">
+                download corrected package
               </button>
             </div>
           </div>

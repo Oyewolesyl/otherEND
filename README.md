@@ -48,10 +48,29 @@ STRIPE_WEBHOOK_SECRET=whsec_for_subscription_webhook
 
 current behavior:
 
-- free tier reviews ideas and uploaded zip files, then explains risks and fixes
-- paid tier shows the otai corrected approach, safer code plan, tests, and stronger build prompt
+- free tier reviews ideas, uploaded zip files, and public github repos, then explains risks and fixes
+- free tier should be enforced as 3 reviews per month once subscription/account limits are connected
+- paid tier shows the otai corrected approach, safer code plan, tests, stronger build prompt, and corrected package zip
 - stripe checkout opens when `STRIPE_SECRET_KEY` and `STRIPE_PRICE_PRO` are configured
 - subscription enforcement still needs the stripe webhook to mark users as paid in the database
+
+## github review
+
+launch behavior:
+
+- upload a `.zip` of code for review
+- paste a public github repo url for review
+- otai scans project structure and flags backend, database, security, testing, and launch signals
+
+private github repo review is possible, but it should be added as a github app or oauth connection after launch. required env vars for that phase:
+
+```bash
+GITHUB_CLIENT_ID=github_oauth_client_id
+GITHUB_CLIENT_SECRET=github_oauth_client_secret
+GITHUB_APP_ID=github_app_id
+GITHUB_PRIVATE_KEY=github_app_private_key
+GITHUB_WEBHOOK_SECRET=github_webhook_secret
+```
 
 ## product surface
 
@@ -63,8 +82,10 @@ current behavior:
 - generated engineering artifacts
 - export-ready implementation brief
 - zip code structure scan
+- public github repo scan
 - free and paid review modes
 - stripe checkout setup endpoint
+- corrected package zip for paid reviews
 
 ## backend included
 

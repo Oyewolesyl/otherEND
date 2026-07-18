@@ -630,6 +630,34 @@ textarea {
   cursor: pointer;
 }
 
+.repo-action {
+  grid-column: 1 / -1;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 10px;
+}
+
+.repo-action input {
+  min-height: 44px;
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  background: #0c0d0f;
+  color: var(--ink);
+  padding: 0 13px;
+  outline: none;
+}
+
+.repo-action button {
+  min-height: 44px;
+  border: 1px solid var(--line-strong);
+  border-radius: 6px;
+  background: #101114;
+  color: var(--silver);
+  padding: 0 14px;
+  font-weight: 650;
+  cursor: pointer;
+}
+
 .file-action input {
   position: absolute;
   inset: 0;
@@ -1172,6 +1200,7 @@ textarea:focus {
   .auth-controls,
   .upload-panel,
   .tier-panel,
+  .repo-action,
   .review-header,
   .ship-panel,
   .check-grid,

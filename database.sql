@@ -38,6 +38,9 @@ create table if not exists reviews (
   disciplines jsonb not null,
   controls jsonb not null,
   blockers jsonb not null,
+  tier text not null default 'free',
+  code_scan jsonb,
+  paid_fixes jsonb not null default '[]'::jsonb,
   implementation_prompt text not null,
   created_at timestamptz not null default now()
 );
