@@ -43,7 +43,7 @@ function App() {
   }, [brief]);
 
   const briefSummary = useMemo(() => {
-    const cleanBrief = brief.trim() || "a generated software project";
+    const cleanBrief = brief.trim() || "a software project";
     return cleanBrief.length > 150 ? `${cleanBrief.slice(0, 150).trim()}...` : cleanBrief;
   }, [brief]);
 
@@ -195,8 +195,8 @@ function App() {
             <p className="eyebrow">review workspace</p>
             <h1>production review console.</h1>
             <p className="lede">
-              otherend sits above the build process and checks whether the system is secure,
-              maintainable, scalable, testable, and ready to ship.
+              otherend reviews the backend, database, security, tests, deployment plan, and release
+              risks before the build is treated as ready.
             </p>
             <div className="cta-row">
               <button className="primary-action" onClick={runServerReview}>
@@ -329,7 +329,7 @@ function App() {
               <strong>review output</strong>
               <p>
                 for "{briefSummary}", otherend creates a gated engineering package before any code is
-                accepted as production-ready.
+                accepted as production ready.
               </p>
               {serverReview && (
                 <ul>
@@ -431,7 +431,7 @@ function App() {
         <section className="standards-section" id="standards">
           <div className="section-heading">
             <p className="eyebrow">standards library</p>
-            <h2>the same professional checklist applied to every generated project.</h2>
+            <h2>the same professional checklist applied to every project.</h2>
           </div>
           <div className="standards-grid">
             {standards.map((standard) => {
@@ -450,8 +450,8 @@ function App() {
             <p className="eyebrow">release path</p>
             <h2>turn fast builds into reviewed software.</h2>
             <p>
-              start with review packages, prompt optimization, security gates, and exportable implementation
-              briefs. expand into repository scanning, github checks, team policies, and model orchestration.
+              start with review packages, security gates, database checks, and exportable implementation
+              briefs. expand into repository scanning, github checks, team policies, and release governance.
             </p>
           </div>
           <button className="primary-action" onClick={runServerReview}>
