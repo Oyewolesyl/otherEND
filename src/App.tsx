@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import {
   ArrowRight,
   Check,
@@ -27,6 +27,13 @@ type ApiReview = {
   implementationPrompt: string;
 };
 
+type ApiProject = {
+  id: string;
+  title: string;
+  brief: string;
+  review?: ApiReview | null;
+};
+
 function App() {
   const [brief, setBrief] = useState(starterBrief);
   const [activeDiscipline, setActiveDiscipline] = useState(disciplines[0].id);
@@ -35,6 +42,9 @@ function App() {
   const [projectId, setProjectId] = useState("");
   const [serverReview, setServerReview] = useState<ApiReview | null>(null);
   const [status, setStatus] = useState(token ? "session ready" : "sign in to save reviews");
+  const [storageMode, setStorageMode] = useState("checking");
+  const [projectCount, setProjectCount] = useState(0);
+  const [auditCount, setAuditCount] = useState(0);
   const [menuOpen, setMenuOpen] = useState(false);
 
   const selected = disciplines.find((discipline) => discipline.id === activeDiscipline) ?? disciplines[0];
@@ -49,6 +59,13 @@ function App() {
     const cleanBrief = brief.trim() || "a generated software project";
     return cleanBrief.length > 150 ? `${cleanBrief.slice(0, 150).trim()}...` : cleanBrief;
   }, [brief]);
+
+  useEffect(() => {
+    fetch("/api/health")
+      .then((response) => response.json())
+      .then((body) => setStorageMode(body.storage || "unknown"))
+      .catch(() => setStorageMode("offline"));
+  }, []);
 
   async function api(path: string, options: RequestInit = {}) {
     const response = await fetch(path, {
@@ -80,7 +97,27 @@ function App() {
     }
     localStorage.setItem("otherend_token", body.token);
     setToken(body.token);
+    setStorageMode(body.storage || storageMode);
     setStatus(`signed in as ${body.user.email}`);
+    await refreshWorkspace(body.token);
+  }
+
+  async function refreshWorkspace(activeToken = token) {
+    if (!activeToken) return;
+    const request = (path: string) =>
+      fetch(path, {
+        headers: {
+          authorization: `Bearer ${activeToken}`,
+        },
+      }).then((response) => {
+        if (!response.ok) throw new Error("workspace refresh failed");
+        return response.json();
+      });
+    const [projectsBody, auditBody] = await Promise.all([request("/api/projects"), request("/api/audit-logs")]);
+    setProjectCount((projectsBody.projects || []).length);
+    setAuditCount((auditBody.auditLogs || []).length);
+    const latestReviewed = (projectsBody.projects || []).find((project: ApiProject) => project.review);
+    if (latestReviewed?.review && !serverReview) setServerReview(latestReviewed.review);
   }
 
   async function runServerReview() {
@@ -107,6 +144,7 @@ function App() {
       );
       setServerReview(reviewed.review);
       setStatus("review saved and ready to export");
+      await refreshWorkspace();
     } catch (error) {
       setStatus(error instanceof Error ? error.message : "review failed");
     }
@@ -214,16 +252,16 @@ function App() {
             </div>
             <div className="signal-grid">
               <div>
-                <strong>12</strong>
-                <span>controls mapped</span>
+                <strong>{projectCount}</strong>
+                <span>projects stored</span>
               </div>
               <div>
-                <strong>8</strong>
-                <span>release blockers</span>
+                <strong>{auditCount}</strong>
+                <span>audit events</span>
               </div>
               <div>
-                <strong>24</strong>
-                <span>tests required</span>
+                <strong>{storageMode}</strong>
+                <span>storage layer</span>
               </div>
             </div>
             <div className="decision-row">
@@ -245,6 +283,11 @@ function App() {
           <div>
             <p className="eyebrow">workspace</p>
             <h2>save projects, run reviews, export build prompts.</h2>
+          </div>
+          <div className="database-summary" aria-label="database implementation">
+            <span>database implementation</span>
+            <strong>{storageMode === "postgres" ? "postgres persistence active" : "local json fallback active"}</strong>
+            <p>production supports users, workspaces, memberships, projects, reviews, and audit logs through `database.sql`.</p>
           </div>
           <div className="auth-controls">
             <input
@@ -388,6 +431,31 @@ function App() {
             {artifacts.map((artifact) => (
               <ArtifactCard key={artifact.title} artifact={artifact} />
             ))}
+          </div>
+        </section>
+
+        <section className="database-section">
+          <div className="section-heading">
+            <p className="eyebrow">backend and database core</p>
+            <h2>the app now has a production database contract, not just screens.</h2>
+          </div>
+          <div className="database-grid">
+            <article>
+              <strong>workspace model</strong>
+              <p>users belong to workspaces through memberships, so team access can grow without rewriting the backend.</p>
+            </article>
+            <article>
+              <strong>project persistence</strong>
+              <p>each product brief is stored as a project and can be updated, listed, reviewed, and exported.</p>
+            </article>
+            <article>
+              <strong>review history</strong>
+              <p>reviews are saved separately from projects with readiness, disciplines, controls, blockers, and prompts.</p>
+            </article>
+            <article>
+              <strong>audit trail</strong>
+              <p>project creation, updates, and review runs write audit events for accountability.</p>
+            </article>
           </div>
         </section>
 

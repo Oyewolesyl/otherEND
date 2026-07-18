@@ -59,6 +59,15 @@ export const disciplines: Discipline[] = [
     score: 88,
   },
   {
+    id: "database",
+    icon: GitBranch,
+    title: "database engineer",
+    role: "turns product state into durable tables, migrations, and audit trails",
+    verdict: "users, workspaces, projects, reviews, controls, blockers, and audit events have a real storage model.",
+    checks: ["postgres schema", "migration path", "review history", "audit trail"],
+    score: 86,
+  },
+  {
     id: "security",
     icon: ShieldCheck,
     title: "security engineer",
