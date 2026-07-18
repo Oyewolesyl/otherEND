@@ -220,13 +220,13 @@ function App() {
                 <span>tests required</span>
               </div>
             </div>
-            <div className="terminal-card">
-              <span>review.trace</span>
-              <code>
+            <div className="review-note">
+              <span>current review</span>
+              <p>
                 {serverReview
-                  ? `saved project ${projectId.slice(0, 8)}\n${serverReview.controls.slice(0, 3).join("\n")}\nexport ready`
-                  : "auth boundary checked\napi contract normalized\nsecrets policy required\nship gate pending"}
-              </code>
+                  ? `project ${projectId.slice(0, 8)} is saved with ${serverReview.controls.length} required controls.`
+                  : "run a review to turn the brief into controls, blockers, and a release package."}
+              </p>
             </div>
           </aside>
         </section>
