@@ -10,7 +10,6 @@ import {
   MessageSquareText,
   Play,
   Shield,
-  Sparkles,
 } from "lucide-react";
 import { ArtifactCard } from "./components/ArtifactCard";
 import { DisciplineCard } from "./components/DisciplineCard";
@@ -18,7 +17,7 @@ import { ScoreRing } from "./components/ScoreRing";
 import { artifacts, disciplines, risks, standards, workflow } from "./data/reviewModel";
 
 const starterBrief =
-  "build a subscription saas where teams can create projects, invite members, assign tasks, upload files, and receive ai summaries before weekly planning.";
+  "build a subscription saas where teams can create projects, invite members, assign tasks, upload files, and receive weekly planning summaries.";
 
 type ApiReview = {
   readiness: number;
@@ -45,7 +44,7 @@ function App() {
   }, [brief]);
 
   const briefSummary = useMemo(() => {
-    const cleanBrief = brief.trim() || "an ai-generated software project";
+    const cleanBrief = brief.trim() || "a generated software project";
     return cleanBrief.length > 150 ? `${cleanBrief.slice(0, 150).trim()}...` : cleanBrief;
   }, [brief]);
 
@@ -70,7 +69,7 @@ function App() {
     const response = await fetch("/api/auth", {
       method: "POST",
       headers: { "content-type": "application/json" },
-      body: JSON.stringify({ email, name: "otherEND builder" }),
+      body: JSON.stringify({ email, name: "otherend builder" }),
     });
     const body = await response.json();
     if (!response.ok) {
@@ -156,12 +155,11 @@ function App() {
         <section className="console-grid" id="console">
           <div className="intro-panel">
             <p className="eyebrow">
-              <Sparkles size={16} aria-hidden="true" />
               engineering intelligence as a service
             </p>
-            <h1>turn raw ai-built software into production-reviewable engineering.</h1>
+            <h1>turn raw software builds into production-ready engineering.</h1>
             <p className="lede">
-              otherEND sits above coding models and checks whether the system is secure, maintainable,
+              otherend sits above coding tools and checks whether the system is secure, maintainable,
               scalable, testable, and ready to ship.
             </p>
             <div className="cta-row">
@@ -290,7 +288,7 @@ function App() {
             <div className="generated-brief">
               <strong>review output</strong>
               <p>
-                for "{briefSummary}", otherEND would create a gated engineering package before any code is
+                for "{briefSummary}", otherend creates a gated engineering package before any code is
                 accepted as production-ready.
               </p>
               {serverReview && (
@@ -374,7 +372,7 @@ function App() {
         <section className="standards-section" id="standards">
           <div className="section-heading">
             <p className="eyebrow">standards library</p>
-            <h2>the same professional checklist applied to every ai-generated project.</h2>
+            <h2>the same professional checklist applied to every generated project.</h2>
           </div>
           <div className="standards-grid">
             {standards.map((standard) => {
@@ -393,7 +391,7 @@ function App() {
         <section className="ship-panel">
           <div>
             <p className="eyebrow">launch path</p>
-            <h2>position it as the quality layer for vibe-coded software.</h2>
+            <h2>position it as the quality layer for generated software.</h2>
             <p>
               start with review packages, prompt optimization, security gates, and exportable implementation
               briefs. expand into repository scanning, github checks, team policies, and model orchestration.

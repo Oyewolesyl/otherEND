@@ -124,7 +124,7 @@ export const artifacts: Artifact[] = [
   {
     icon: FileCode2,
     title: "implementation prompt",
-    description: "a model-ready build prompt that can be sent to Cursor, Claude, Codex, Replit, or similar tools.",
+    description: "a model-ready build prompt that can be sent to the coding tool your team already uses.",
     status: "ready",
   },
   {
@@ -137,7 +137,7 @@ export const artifacts: Artifact[] = [
 
 export const risks: Risk[] = [
   {
-    label: "ai-generated auth logic may skip object-level authorization",
+    label: "generated auth logic may skip object-level authorization",
     severity: "high",
     control: "force every resource endpoint through ownership or rbac policy checks",
   },
