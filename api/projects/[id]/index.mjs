@@ -1,5 +1,5 @@
 import { handleApi } from "../../../lib/api-handler.mjs";
 
 export default function handler(req, res) {
-  return handleApi(req, res, `/api/projects/${req.query.id}/export`);
+  return handleApi(req, res, `/api/projects/${req.query.id}`);
 }
