@@ -10,19 +10,19 @@ const starterBrief =
 const guideSteps = [
   {
     title: "what otherend does",
-    body: "paste a product build request and otherend turns it into a backend, database, security, testing, and release-readiness review.",
+    body: "describe the app you want to build. otherend checks the parts most vibe-built products miss: backend, database, security, testing, and launch risk.",
   },
   {
     title: "start with the brief",
-    body: "use the project intake area to describe the app, api, database, users, permissions, and launch expectations.",
+    body: "write in normal language. say who the app is for, what users can do, what data is stored, and what must be protected.",
   },
   {
     title: "run the review",
-    body: "save and review creates a project, runs the engineering checks, then shows controls, blockers, readiness, and a ship decision.",
+    body: "press save and review. otherend turns your idea into clear fixes, risks, and a simple readiness score before you build or ship.",
   },
   {
-    title: "export the package",
-    body: "export copies the markdown review. copy implementation prompt gives you a build prompt for your coding agent.",
+    title: "use the output",
+    body: "copy the implementation prompt into cursor, claude, codex, or any coding tool. export gives you a handoff document for yourself or a developer.",
   },
 ];
 
@@ -47,7 +47,7 @@ function App() {
   const [token, setToken] = useState(() => localStorage.getItem("otherend_token") || "");
   const [projectId, setProjectId] = useState("");
   const [serverReview, setServerReview] = useState<ApiReview | null>(null);
-  const [status, setStatus] = useState(token ? "session ready" : "sign in to save reviews");
+  const [status, setStatus] = useState(token ? "you are signed in. describe an app and run a review." : "sign in to save your app idea and review.");
   const [storageMode, setStorageMode] = useState("checking");
   const [projectCount, setProjectCount] = useState(0);
   const [auditCount, setAuditCount] = useState(0);
@@ -69,10 +69,10 @@ function App() {
   }, [brief]);
 
   const nextStep = useMemo(() => {
-    if (!token) return "sign in first so the app can save projects, reviews, and audit events.";
-    if (!projectId) return "write or adjust the brief, then press save and review to create the first review package.";
-    if (!serverReview) return "the project is saved. run review to generate blockers, controls, and exportable guidance.";
-    return "review the blockers and controls, then export the markdown package or copy the implementation prompt.";
+    if (!token) return "enter an email and sign in. this lets otherend remember your projects and reviews.";
+    if (!projectId) return "describe what you want to build, then press save and review.";
+    if (!serverReview) return "your project is saved. press save and review again if you changed the brief.";
+    return "read the fixes, then copy the prompt into your coding tool or export the review.";
   }, [projectId, serverReview, token]);
 
   useEffect(() => {
@@ -137,7 +137,7 @@ function App() {
 
   async function runServerReview() {
     try {
-      setStatus("creating or updating the project from your brief...");
+      setStatus("saving your app idea...");
       let activeProjectId = projectId;
       if (!activeProjectId) {
         const created = await api("/api/projects", {
@@ -153,12 +153,12 @@ function App() {
         });
       }
 
-      setStatus("running backend, database, security, qa, and release checks...");
+      setStatus("checking the build for backend, database, security, testing, and launch issues...");
       const reviewed = await api(`/api/projects/${activeProjectId}/review`, { method: "POST" }).then((response) =>
         response.json(),
       );
       setServerReview(reviewed.review);
-      setStatus("review saved. blockers, controls, readiness, and export package are ready.");
+      setStatus("review complete. otherend found what is ready, what needs fixing, and what to do next.");
       await refreshWorkspace();
     } catch (error) {
       setStatus(error instanceof Error ? error.message : "review failed");
@@ -168,7 +168,7 @@ function App() {
   async function exportReview() {
     try {
       if (!projectId) {
-        setStatus("run a review first, then export will copy the saved markdown package.");
+        setStatus("run a review first. then export will copy the full review document.");
         return;
       }
       const response = await api(`/api/projects/${projectId}/export`, {
@@ -176,7 +176,7 @@ function App() {
       });
       const markdown = await response.text();
       await navigator.clipboard.writeText(markdown);
-      setStatus("markdown review copied. paste it into docs, github, or your delivery handoff.");
+      setStatus("review document copied. paste it into docs, github, notion, or send it to a developer.");
     } catch (error) {
       setStatus(error instanceof Error ? error.message : "export failed");
     }
@@ -187,7 +187,7 @@ function App() {
       serverReview?.implementationPrompt ||
       `build this project with production engineering standards:\n\n${brief}\n\ninclude architecture, backend contracts, security controls, testing, deployment, and release readiness.`;
     await navigator.clipboard.writeText(prompt);
-    setStatus("implementation prompt copied. paste it into your coding agent to build from the reviewed brief.");
+    setStatus("build prompt copied. paste it into your coding tool so it builds from the reviewed plan.");
   }
 
   function closeGuide() {
@@ -221,9 +221,9 @@ function App() {
             menu
           </button>
           <nav id="app-nav" className={menuOpen ? "is-open" : ""}>
-            <a href="#review" onClick={() => setMenuOpen(false)}>review</a>
-            <a href="#artifacts" onClick={() => setMenuOpen(false)}>artifacts</a>
-            <a href="#standards" onClick={() => setMenuOpen(false)}>standards</a>
+            <a href="#review" onClick={() => setMenuOpen(false)}>start</a>
+            <a href="#artifacts" onClick={() => setMenuOpen(false)}>outputs</a>
+            <a href="#standards" onClick={() => setMenuOpen(false)}>checks</a>
             <a href="https://otherend.vercel.app/" onClick={() => setMenuOpen(false)}>landing</a>
           </nav>
           <button className="guide-button" type="button" onClick={() => { setGuideStep(0); setGuideOpen(true); }}>
@@ -237,35 +237,35 @@ function App() {
         <section className="console-grid" id="console">
           <div className="intro-panel">
             <p className="eyebrow">review workspace</p>
-            <h1>production review console.</h1>
+            <h1>know what is wrong before you build.</h1>
             <p className="lede">
-              otherend reviews the backend, database, security, tests, deployment plan, and release
-              risks before the build is treated as ready.
+              describe your app in normal language. otherend checks the backend, database, security,
+              testing, and launch risks so you know what to fix before code becomes a problem.
             </p>
             <div className="purpose-list" aria-label="what this app does">
-              <span>1. describe the build</span>
-              <span>2. run engineering review</span>
-              <span>3. inspect blockers</span>
-              <span>4. export the build package</span>
+              <span>1. describe the app you want</span>
+              <span>2. get a plain-language review</span>
+              <span>3. see what needs fixing</span>
+              <span>4. copy the improved build prompt</span>
             </div>
             <div className="cta-row action-row">
               <div>
-                <button className="primary-action" onClick={runServerReview} title="save this brief and run backend, database, security, qa, and release checks">
-                  run review
+                <button className="primary-action" onClick={runServerReview} title="save this brief and check backend, database, security, testing, and launch risks">
+                  check my app idea
                 </button>
-                <small>creates or updates a project, then runs the review engine.</small>
+                <small>checks your idea and explains what is safe, risky, or missing.</small>
               </div>
               <div>
                 <a className="secondary-action" href="#artifacts" title="jump to the documents and reports this review creates">
-                  view artifacts
+                  see outputs
                 </a>
-                <small>shows the output package: prompts, reports, controls, and release notes.</small>
+                <small>shows the documents and prompts this review creates for you.</small>
               </div>
             </div>
             <div className="proof-row" aria-label="review promises">
-              <span>backend standards</span>
-              <span>security controls</span>
-              <span>release decision</span>
+              <span>database plan</span>
+              <span>security checks</span>
+              <span>launch advice</span>
             </div>
           </div>
 
@@ -275,7 +275,7 @@ function App() {
             </div>
             <div className="system-head">
               <p className="eyebrow">active review</p>
-              <h2>engineering gate status</h2>
+              <h2>how ready each part looks</h2>
             </div>
             <div className="gate-stack">
               {disciplines.slice(0, 4).map((discipline) => {
@@ -290,27 +290,27 @@ function App() {
             <div className="signal-grid">
               <div>
                 <strong>{projectCount}</strong>
-                <span>projects stored</span>
+                <span>saved ideas</span>
               </div>
               <div>
                 <strong>{auditCount}</strong>
-                <span>audit events</span>
+                <span>actions logged</span>
               </div>
               <div>
                 <strong>{storageMode}</strong>
-                <span>storage layer</span>
+                <span>save mode</span>
               </div>
             </div>
             <div className="decision-row">
-              <span>ship decision</span>
-              <strong>{serverReview && serverReview.blockers.length === 0 ? "ready" : "needs review"}</strong>
+              <span>can i keep building?</span>
+              <strong>{serverReview && serverReview.blockers.length === 0 ? "yes" : "check first"}</strong>
             </div>
             <div className="review-note">
-              <span>current review</span>
+              <span>what this means</span>
               <p>
                 {serverReview
-                  ? `project ${projectId.slice(0, 8)} is saved with ${serverReview.controls.length} required controls.`
-                  : "run a review to turn the brief into controls, blockers, and a release package."}
+                  ? `your review is saved. otherend listed ${serverReview.controls.length} fixes or safeguards to include before launch.`
+                  : "run a review to turn your idea into risks, fixes, and a better prompt for your coding tool."}
               </p>
             </div>
           </aside>
@@ -319,12 +319,12 @@ function App() {
         <section className="auth-panel">
           <div>
             <p className="eyebrow">workspace</p>
-            <h2>save projects, run reviews, export build prompts.</h2>
+            <h2>save the idea, review it, then hand off the result.</h2>
           </div>
             <div className="database-summary" aria-label="database implementation">
-              <span>database implementation</span>
-              <strong>{storageMode === "postgres" ? "postgres persistence active" : "local json fallback active"}</strong>
-              <p>this is where saved users, workspaces, projects, reviews, and audit logs live. postgres turns it into durable storage.</p>
+              <span>saving your work</span>
+              <strong>{storageMode === "postgres" ? "database saving is active" : "temporary saving is active"}</strong>
+              <p>otherend can remember users, workspaces, app ideas, reviews, and action history. connect postgres for permanent storage.</p>
             </div>
             <div className="auth-controls">
             <input
@@ -355,8 +355,8 @@ function App() {
           <div className="brief-panel">
             <div className="section-title">
               <div>
-                <p className="eyebrow">project intake</p>
-                <h2>describe the product build</h2>
+                <p className="eyebrow">step 1</p>
+                <h2>describe what you want to build</h2>
               </div>
             </div>
             <textarea
@@ -366,15 +366,15 @@ function App() {
               rows={8}
             />
             <p className="field-help">
-              include users, data, permissions, payments, integrations, expected traffic, and anything that must be secure.
+              write like you are explaining the app to a teammate. include users, data, payments, files, permissions, and anything sensitive.
             </p>
             <div className="prompt-footer">
-              <span>{brief.length} characters reviewed</span>
+              <span>{brief.length} characters ready to review</span>
               <button onClick={copyPrompt} title="copy a coding-agent prompt based on this brief and the review standards">
-                copy implementation prompt
+                copy build prompt
               </button>
               <button onClick={runServerReview} title="save this project and generate the engineering review">
-                save and review
+                save and check
               </button>
             </div>
           </div>
@@ -382,10 +382,10 @@ function App() {
           <div className="review-panel">
             <div className="review-header">
               <div>
-                <p className="eyebrow">specialist review</p>
+                <p className="eyebrow">step 2</p>
                 <h2>{selected.title}</h2>
               </div>
-              <ScoreRing score={selected.score} label="discipline score" />
+              <ScoreRing score={selected.score} label="readiness" />
             </div>
             <p className="selected-verdict">{selected.verdict}</p>
             <div className="check-grid">
@@ -398,11 +398,11 @@ function App() {
             <div className="generated-brief">
               <strong>review output</strong>
               <p>
-                for "{briefSummary}", otherend creates a gated engineering package before any code is
-                accepted as production ready.
+                for "{briefSummary}", otherend explains what should be fixed or planned before this
+                becomes production software.
               </p>
               <p>
-                use this panel to understand why the selected discipline scored the project this way and what must be fixed.
+                click each review area below to see the checks behind the score in simpler terms.
               </p>
               {serverReview && (
                 <ul>
@@ -430,8 +430,8 @@ function App() {
           <div className="pipeline-panel">
             <div className="section-title">
               <div>
-                <p className="eyebrow">workflow</p>
-                <h2>one request, six engineering gates</h2>
+                <p className="eyebrow">how it works</p>
+                <h2>one idea becomes a clearer build plan</h2>
               </div>
             </div>
             <ol className="timeline">
@@ -448,8 +448,8 @@ function App() {
           <div className="risk-panel">
             <div className="section-title">
               <div>
-                <p className="eyebrow">risk engine</p>
-                <h2>hidden production risks become visible</h2>
+                <p className="eyebrow">what can go wrong</p>
+                <h2>the review shows risks before users find them</h2>
               </div>
             </div>
             <div className="risk-list">
@@ -466,8 +466,8 @@ function App() {
 
         <section className="artifact-section" id="artifacts">
           <div className="section-heading">
-            <p className="eyebrow">deliverables</p>
-            <h2>code is only one artifact. the engineering package is the product.</h2>
+            <p className="eyebrow">what you get</p>
+            <h2>use these outputs to build with more confidence.</h2>
           </div>
           <div className="artifact-grid">
             {artifacts.map((artifact) => (
@@ -478,33 +478,33 @@ function App() {
 
         <section className="database-section">
           <div className="section-heading">
-            <p className="eyebrow">backend and database core</p>
-            <h2>the app now has a production database contract, not just screens.</h2>
+            <p className="eyebrow">what gets saved</p>
+            <h2>your ideas and reviews are structured like a real product workspace.</h2>
           </div>
           <div className="database-grid">
             <article>
               <strong>workspace model</strong>
-              <p>users belong to workspaces through memberships, so team access can grow without rewriting the backend.</p>
+              <p>people can belong to a shared workspace, so a founder, teammate, or developer can review the same build.</p>
             </article>
             <article>
-              <strong>project persistence</strong>
-              <p>each product brief is stored as a project and can be updated, listed, reviewed, and exported.</p>
+              <strong>saved app ideas</strong>
+              <p>each brief becomes a saved project that can be changed, reviewed again, and exported.</p>
             </article>
             <article>
               <strong>review history</strong>
-              <p>reviews are saved separately from projects with readiness, disciplines, controls, blockers, and prompts.</p>
+              <p>each review keeps the readiness score, risk notes, fixes, blockers, and build prompt.</p>
             </article>
             <article>
-              <strong>audit trail</strong>
-              <p>project creation, updates, and review runs write audit events for accountability.</p>
+              <strong>activity history</strong>
+              <p>important actions are logged so users can understand what changed and when.</p>
             </article>
           </div>
         </section>
 
         <section className="standards-section" id="standards">
           <div className="section-heading">
-            <p className="eyebrow">standards library</p>
-            <h2>the same professional checklist applied to every project.</h2>
+            <p className="eyebrow">what otherend checks</p>
+            <h2>the same serious checklist, explained in plain language.</h2>
           </div>
           <div className="standards-grid">
             {standards.map((standard) => {
@@ -521,14 +521,14 @@ function App() {
         <section className="ship-panel">
           <div>
             <p className="eyebrow">release path</p>
-            <h2>turn fast builds into reviewed software.</h2>
+            <h2>move from vibe-built to ready-to-review.</h2>
             <p>
-              start with review packages, security gates, database checks, and exportable implementation
-              briefs. expand into repository scanning, github checks, team policies, and release governance.
+              start with one idea. get the risks, fixes, database notes, security notes, and a stronger
+              prompt for your coding tool.
             </p>
           </div>
           <button className="primary-action" onClick={runServerReview}>
-            start review
+            check this idea
           </button>
         </section>
       </section>
