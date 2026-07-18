@@ -1,17 +1,4 @@
 import { useEffect, useMemo, useState } from "react";
-import {
-  ArrowRight,
-  Check,
-  ChevronRight,
-  Clipboard,
-  Download,
-  Gauge,
-  Layers3,
-  Menu,
-  MessageSquareText,
-  Play,
-  Shield,
-} from "lucide-react";
 import { ArtifactCard } from "./components/ArtifactCard";
 import { DisciplineCard } from "./components/DisciplineCard";
 import { ScoreRing } from "./components/ScoreRing";
@@ -189,7 +176,7 @@ function App() {
             aria-expanded={menuOpen}
             onClick={() => setMenuOpen((open) => !open)}
           >
-            <Menu size={18} aria-hidden="true" />
+            <span aria-hidden="true"></span>
             menu
           </button>
           <nav id="app-nav" className={menuOpen ? "is-open" : ""}>
@@ -198,8 +185,8 @@ function App() {
             <a href="#standards" onClick={() => setMenuOpen(false)}>standards</a>
             <a href="https://otherend.vercel.app/" onClick={() => setMenuOpen(false)}>landing</a>
           </nav>
-          <button className="icon-button" aria-label="export review" onClick={exportReview}>
-            <Download size={18} aria-hidden="true" />
+          <button className="export-button" aria-label="export review" onClick={exportReview}>
+            export
           </button>
         </header>
 
@@ -216,7 +203,6 @@ function App() {
             <div className="cta-row">
               <button className="primary-action" onClick={runServerReview}>
                 run review
-                <ArrowRight size={18} aria-hidden="true" />
               </button>
               <a className="secondary-action" href="#artifacts">
                 view artifacts
@@ -231,7 +217,6 @@ function App() {
 
           <aside className="system-panel" aria-label="platform preview">
             <div className="live-badge">
-              <Gauge size={17} aria-hidden="true" />
               <span>{readinessScore}% readiness</span>
             </div>
             <div className="system-head">
@@ -240,10 +225,8 @@ function App() {
             </div>
             <div className="gate-stack">
               {disciplines.slice(0, 4).map((discipline) => {
-                const Icon = discipline.icon;
                 return (
                   <article key={discipline.id}>
-                    <Icon size={18} aria-hidden="true" />
                     <span>{discipline.title}</span>
                     <strong>{discipline.score}</strong>
                   </article>
@@ -306,9 +289,6 @@ function App() {
         <section className="workbench" id="review">
           <div className="brief-panel">
             <div className="section-title">
-              <span className="icon-tile">
-                <MessageSquareText size={20} aria-hidden="true" />
-              </span>
               <div>
                 <p className="eyebrow">project intake</p>
                 <h2>describe the product build</h2>
@@ -323,11 +303,9 @@ function App() {
             <div className="prompt-footer">
               <span>{brief.length} characters reviewed</span>
               <button onClick={copyPrompt}>
-                <Clipboard size={17} aria-hidden="true" />
                 copy implementation prompt
               </button>
               <button onClick={runServerReview}>
-                <Play size={17} aria-hidden="true" />
                 save and review
               </button>
             </div>
@@ -345,7 +323,6 @@ function App() {
             <div className="check-grid">
               {selected.checks.map((check) => (
                 <span key={check}>
-                  <Check size={15} aria-hidden="true" />
                   {check}
                 </span>
               ))}
@@ -381,9 +358,6 @@ function App() {
         <section className="split-section">
           <div className="pipeline-panel">
             <div className="section-title">
-              <span className="icon-tile">
-                <Layers3 size={20} aria-hidden="true" />
-              </span>
               <div>
                 <p className="eyebrow">workflow</p>
                 <h2>one request, six engineering gates</h2>
@@ -394,7 +368,7 @@ function App() {
                 <li key={step}>
                   <span>{String(index + 1).padStart(2, "0")}</span>
                   <p>{step}</p>
-                  {index < workflow.length - 1 && <ChevronRight size={17} aria-hidden="true" />}
+                  {index < workflow.length - 1 && <i aria-hidden="true" />}
                 </li>
               ))}
             </ol>
@@ -402,9 +376,6 @@ function App() {
 
           <div className="risk-panel">
             <div className="section-title">
-              <span className="icon-tile danger">
-                <Shield size={20} aria-hidden="true" />
-              </span>
               <div>
                 <p className="eyebrow">risk engine</p>
                 <h2>hidden production risks become visible</h2>
@@ -466,10 +437,8 @@ function App() {
           </div>
           <div className="standards-grid">
             {standards.map((standard) => {
-              const Icon = standard.icon;
               return (
                 <article key={standard.label}>
-                  <Icon size={22} aria-hidden="true" />
                   <strong>{standard.label}</strong>
                   <p>{standard.value}</p>
                 </article>
@@ -488,7 +457,6 @@ function App() {
             </p>
           </div>
           <button className="primary-action" onClick={runServerReview}>
-            <Play size={18} aria-hidden="true" />
             start review
           </button>
         </section>
