@@ -69,7 +69,7 @@ main {
   top: 12px;
   z-index: 10;
   display: grid;
-  grid-template-columns: auto minmax(0, 1fr) auto;
+  grid-template-columns: auto minmax(0, 1fr) auto auto;
   align-items: center;
   gap: 18px;
   min-height: 74px;
@@ -114,6 +114,7 @@ main {
 }
 
 .menu-button,
+.guide-button,
 .export-button {
   min-height: 42px;
   align-items: center;
@@ -140,6 +141,10 @@ main {
 }
 
 .export-button {
+  display: inline-flex;
+}
+
+.guide-button {
   display: inline-flex;
 }
 
@@ -228,6 +233,21 @@ h3 {
   line-height: 1.68;
 }
 
+.purpose-list {
+  display: grid;
+  max-width: 620px;
+  gap: 8px;
+  margin-top: 24px;
+  color: var(--silver);
+  font-size: 0.92rem;
+  font-weight: 580;
+}
+
+.purpose-list span {
+  border-top: 1px solid var(--line);
+  padding-top: 9px;
+}
+
 .cta-row,
 .prompt-footer {
   display: flex;
@@ -235,6 +255,23 @@ h3 {
   gap: 10px;
   align-items: center;
   margin-top: 28px;
+}
+
+.action-row {
+  align-items: flex-start;
+}
+
+.action-row > div {
+  display: grid;
+  min-width: min(100%, 220px);
+  gap: 8px;
+}
+
+.action-row small {
+  max-width: 300px;
+  color: var(--quiet);
+  font-size: 0.82rem;
+  line-height: 1.42;
 }
 
 .primary-action,
@@ -453,6 +490,40 @@ h3 {
   border-color: var(--line-strong);
 }
 
+.activity-panel {
+  display: grid;
+  grid-template-columns: minmax(0, 0.8fr) minmax(0, 1.2fr);
+  gap: 18px;
+  margin-top: 18px;
+  border: 1px solid var(--line-strong);
+  border-radius: 8px;
+  background: #070707;
+  padding: clamp(18px, 2.6vw, 24px);
+}
+
+.activity-panel div {
+  display: grid;
+  gap: 8px;
+}
+
+.activity-panel span {
+  color: var(--blue-soft);
+  font-size: 0.76rem;
+  font-weight: 620;
+}
+
+.activity-panel strong {
+  color: var(--ink);
+  font-size: clamp(1rem, 1.4vw, 1.18rem);
+  line-height: 1.35;
+}
+
+.activity-panel p {
+  margin: 0;
+  color: var(--muted);
+  line-height: 1.5;
+}
+
 .database-summary {
   border-left: 1px solid var(--line-strong);
   padding-left: 18px;
@@ -494,6 +565,13 @@ textarea {
   background: #0c0d0f;
   color: var(--ink);
   outline: none;
+}
+
+.field-help {
+  margin: 10px 0 0;
+  color: var(--quiet);
+  font-size: 0.9rem;
+  line-height: 1.45;
 }
 
 .auth-controls input {
@@ -826,6 +904,66 @@ textarea:focus {
   color: var(--blue-soft);
 }
 
+.guide-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 50;
+  display: grid;
+  place-items: end center;
+  background: rgba(0, 0, 0, 0.62);
+  padding: 18px;
+}
+
+.guide-card {
+  width: min(100%, 460px);
+  border: 1px solid var(--line-strong);
+  border-radius: 8px;
+  background: #080809;
+  box-shadow: 0 28px 90px rgba(0, 0, 0, 0.48);
+  padding: 22px;
+}
+
+.guide-progress,
+.guide-actions {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.guide-progress {
+  margin-bottom: 18px;
+}
+
+.guide-progress span {
+  color: var(--blue-soft);
+  font-size: 0.76rem;
+  font-weight: 620;
+}
+
+.guide-progress button {
+  border: 0;
+  background: transparent;
+  color: var(--muted);
+  font-weight: 620;
+  cursor: pointer;
+}
+
+.guide-card h2 {
+  font-size: clamp(1.55rem, 4vw, 2rem);
+}
+
+.guide-card p {
+  margin: 14px 0 22px;
+  color: var(--muted);
+  line-height: 1.58;
+}
+
+.guide-actions button:disabled {
+  cursor: not-allowed;
+  opacity: 0.42;
+}
+
 @media (max-width: 1080px) {
   .console-grid,
   .auth-panel,
@@ -856,14 +994,14 @@ textarea:focus {
   }
 
   .topbar {
-    grid-template-columns: minmax(0, 1fr) auto auto;
+    grid-template-columns: minmax(0, 1fr) auto auto auto;
     gap: 8px;
     min-height: 70px;
     padding: 8px;
   }
 
   .brand {
-    width: clamp(134px, 42vw, 164px);
+    width: clamp(108px, 34vw, 154px);
   }
 
   .menu-button {
@@ -940,5 +1078,38 @@ textarea:focus {
   .secondary-action,
   .prompt-footer button {
     width: 100%;
+  }
+
+  .activity-panel,
+  .action-row {
+    grid-template-columns: 1fr;
+  }
+
+  .guide-button,
+  .export-button {
+    min-width: 48px;
+    padding: 0 10px;
+  }
+
+  .guide-card {
+    padding: 18px;
+  }
+}
+
+@media (max-width: 420px) {
+  .topbar {
+    gap: 6px;
+  }
+
+  .menu-button,
+  .guide-button,
+  .export-button {
+    min-height: 40px;
+    padding: 0 8px;
+    font-size: 0.82rem;
+  }
+
+  .menu-button span {
+    width: 16px;
   }
 }

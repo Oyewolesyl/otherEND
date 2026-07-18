@@ -7,6 +7,25 @@ import { artifacts, disciplines, risks, standards, workflow } from "./data/revie
 const starterBrief =
   "build a subscription saas where teams can create projects, invite members, assign tasks, upload files, and receive weekly planning summaries.";
 
+const guideSteps = [
+  {
+    title: "what otherend does",
+    body: "paste a product build request and otherend turns it into a backend, database, security, testing, and release-readiness review.",
+  },
+  {
+    title: "start with the brief",
+    body: "use the project intake area to describe the app, api, database, users, permissions, and launch expectations.",
+  },
+  {
+    title: "run the review",
+    body: "save and review creates a project, runs the engineering checks, then shows controls, blockers, readiness, and a ship decision.",
+  },
+  {
+    title: "export the package",
+    body: "export copies the markdown review. copy implementation prompt gives you a build prompt for your coding agent.",
+  },
+];
+
 type ApiReview = {
   readiness: number;
   controls: string[];
@@ -33,6 +52,8 @@ function App() {
   const [projectCount, setProjectCount] = useState(0);
   const [auditCount, setAuditCount] = useState(0);
   const [menuOpen, setMenuOpen] = useState(false);
+  const [guideOpen, setGuideOpen] = useState(() => localStorage.getItem("otherend_guide_seen") !== "yes");
+  const [guideStep, setGuideStep] = useState(0);
 
   const selected = disciplines.find((discipline) => discipline.id === activeDiscipline) ?? disciplines[0];
 
@@ -46,6 +67,13 @@ function App() {
     const cleanBrief = brief.trim() || "a software project";
     return cleanBrief.length > 150 ? `${cleanBrief.slice(0, 150).trim()}...` : cleanBrief;
   }, [brief]);
+
+  const nextStep = useMemo(() => {
+    if (!token) return "sign in first so the app can save projects, reviews, and audit events.";
+    if (!projectId) return "write or adjust the brief, then press save and review to create the first review package.";
+    if (!serverReview) return "the project is saved. run review to generate blockers, controls, and exportable guidance.";
+    return "review the blockers and controls, then export the markdown package or copy the implementation prompt.";
+  }, [projectId, serverReview, token]);
 
   useEffect(() => {
     fetch("/api/health")
@@ -85,7 +113,7 @@ function App() {
     localStorage.setItem("otherend_token", body.token);
     setToken(body.token);
     setStorageMode(body.storage || storageMode);
-    setStatus(`signed in as ${body.user.email}`);
+    setStatus(`signed in as ${body.user.email}. workspace is ready for saved reviews.`);
     await refreshWorkspace(body.token);
   }
 
@@ -109,7 +137,7 @@ function App() {
 
   async function runServerReview() {
     try {
-      setStatus("creating project...");
+      setStatus("creating or updating the project from your brief...");
       let activeProjectId = projectId;
       if (!activeProjectId) {
         const created = await api("/api/projects", {
@@ -125,12 +153,12 @@ function App() {
         });
       }
 
-      setStatus("running engineering review...");
+      setStatus("running backend, database, security, qa, and release checks...");
       const reviewed = await api(`/api/projects/${activeProjectId}/review`, { method: "POST" }).then((response) =>
         response.json(),
       );
       setServerReview(reviewed.review);
-      setStatus("review saved and ready to export");
+      setStatus("review saved. blockers, controls, readiness, and export package are ready.");
       await refreshWorkspace();
     } catch (error) {
       setStatus(error instanceof Error ? error.message : "review failed");
@@ -140,7 +168,7 @@ function App() {
   async function exportReview() {
     try {
       if (!projectId) {
-        setStatus("run a review before export");
+        setStatus("run a review first, then export will copy the saved markdown package.");
         return;
       }
       const response = await api(`/api/projects/${projectId}/export`, {
@@ -148,7 +176,7 @@ function App() {
       });
       const markdown = await response.text();
       await navigator.clipboard.writeText(markdown);
-      setStatus("markdown export copied to clipboard");
+      setStatus("markdown review copied. paste it into docs, github, or your delivery handoff.");
     } catch (error) {
       setStatus(error instanceof Error ? error.message : "export failed");
     }
@@ -159,7 +187,20 @@ function App() {
       serverReview?.implementationPrompt ||
       `build this project with production engineering standards:\n\n${brief}\n\ninclude architecture, backend contracts, security controls, testing, deployment, and release readiness.`;
     await navigator.clipboard.writeText(prompt);
-    setStatus("implementation prompt copied");
+    setStatus("implementation prompt copied. paste it into your coding agent to build from the reviewed brief.");
+  }
+
+  function closeGuide() {
+    localStorage.setItem("otherend_guide_seen", "yes");
+    setGuideOpen(false);
+  }
+
+  function nextGuideStep() {
+    if (guideStep >= guideSteps.length - 1) {
+      closeGuide();
+      return;
+    }
+    setGuideStep((step) => step + 1);
   }
 
   return (
@@ -185,7 +226,10 @@ function App() {
             <a href="#standards" onClick={() => setMenuOpen(false)}>standards</a>
             <a href="https://otherend.vercel.app/" onClick={() => setMenuOpen(false)}>landing</a>
           </nav>
-          <button className="export-button" aria-label="export review" onClick={exportReview}>
+          <button className="guide-button" type="button" onClick={() => { setGuideStep(0); setGuideOpen(true); }}>
+            guide
+          </button>
+          <button className="export-button" aria-label="export markdown review" title="copy the saved review as markdown" onClick={exportReview}>
             export
           </button>
         </header>
@@ -198,13 +242,25 @@ function App() {
               otherend reviews the backend, database, security, tests, deployment plan, and release
               risks before the build is treated as ready.
             </p>
-            <div className="cta-row">
-              <button className="primary-action" onClick={runServerReview}>
-                run review
-              </button>
-              <a className="secondary-action" href="#artifacts">
-                view artifacts
-              </a>
+            <div className="purpose-list" aria-label="what this app does">
+              <span>1. describe the build</span>
+              <span>2. run engineering review</span>
+              <span>3. inspect blockers</span>
+              <span>4. export the build package</span>
+            </div>
+            <div className="cta-row action-row">
+              <div>
+                <button className="primary-action" onClick={runServerReview} title="save this brief and run backend, database, security, qa, and release checks">
+                  run review
+                </button>
+                <small>creates or updates a project, then runs the review engine.</small>
+              </div>
+              <div>
+                <a className="secondary-action" href="#artifacts" title="jump to the documents and reports this review creates">
+                  view artifacts
+                </a>
+                <small>shows the output package: prompts, reports, controls, and release notes.</small>
+              </div>
             </div>
             <div className="proof-row" aria-label="review promises">
               <span>backend standards</span>
@@ -265,22 +321,33 @@ function App() {
             <p className="eyebrow">workspace</p>
             <h2>save projects, run reviews, export build prompts.</h2>
           </div>
-          <div className="database-summary" aria-label="database implementation">
-            <span>database implementation</span>
-            <strong>{storageMode === "postgres" ? "postgres persistence active" : "local json fallback active"}</strong>
-            <p>production supports users, workspaces, memberships, projects, reviews, and audit logs through `database.sql`.</p>
-          </div>
-          <div className="auth-controls">
+            <div className="database-summary" aria-label="database implementation">
+              <span>database implementation</span>
+              <strong>{storageMode === "postgres" ? "postgres persistence active" : "local json fallback active"}</strong>
+              <p>this is where saved users, workspaces, projects, reviews, and audit logs live. postgres turns it into durable storage.</p>
+            </div>
+            <div className="auth-controls">
             <input
               aria-label="email"
               value={email}
               onChange={(event) => setEmail(event.target.value)}
               placeholder="you@company.com"
             />
-            <button className="secondary-action" onClick={signIn}>
+            <button className="secondary-action" onClick={signIn} title="create or resume a workspace so reviews can be saved">
               sign in
             </button>
             <span>{status}</span>
+          </div>
+        </section>
+
+        <section className="activity-panel" aria-live="polite">
+          <div>
+            <span>current action</span>
+            <strong>{status}</strong>
+          </div>
+          <div>
+            <span>next step</span>
+            <p>{nextStep}</p>
           </div>
         </section>
 
@@ -298,12 +365,15 @@ function App() {
               onChange={(event) => setBrief(event.target.value)}
               rows={8}
             />
+            <p className="field-help">
+              include users, data, permissions, payments, integrations, expected traffic, and anything that must be secure.
+            </p>
             <div className="prompt-footer">
               <span>{brief.length} characters reviewed</span>
-              <button onClick={copyPrompt}>
+              <button onClick={copyPrompt} title="copy a coding-agent prompt based on this brief and the review standards">
                 copy implementation prompt
               </button>
-              <button onClick={runServerReview}>
+              <button onClick={runServerReview} title="save this project and generate the engineering review">
                 save and review
               </button>
             </div>
@@ -330,6 +400,9 @@ function App() {
               <p>
                 for "{briefSummary}", otherend creates a gated engineering package before any code is
                 accepted as production ready.
+              </p>
+              <p>
+                use this panel to understand why the selected discipline scored the project this way and what must be fixed.
               </p>
               {serverReview && (
                 <ul>
@@ -459,6 +532,31 @@ function App() {
           </button>
         </section>
       </section>
+      {guideOpen && (
+        <div className="guide-overlay" role="dialog" aria-modal="true" aria-labelledby="guide-title">
+          <section className="guide-card">
+            <div className="guide-progress">
+              <span>{guideStep + 1} of {guideSteps.length}</span>
+              <button type="button" onClick={closeGuide}>skip</button>
+            </div>
+            <h2 id="guide-title">{guideSteps[guideStep].title}</h2>
+            <p>{guideSteps[guideStep].body}</p>
+            <div className="guide-actions">
+              <button
+                type="button"
+                className="secondary-action"
+                onClick={() => setGuideStep((step) => Math.max(0, step - 1))}
+                disabled={guideStep === 0}
+              >
+                back
+              </button>
+              <button type="button" className="primary-action" onClick={nextGuideStep}>
+                {guideStep === guideSteps.length - 1 ? "start using otherend" : "next"}
+              </button>
+            </div>
+          </section>
+        </div>
+      )}
     </main>
   );
 }
