@@ -7,6 +7,7 @@ import {
   Download,
   Gauge,
   Layers3,
+  Menu,
   MessageSquareText,
   Play,
   Shield,
@@ -34,6 +35,7 @@ function App() {
   const [projectId, setProjectId] = useState("");
   const [serverReview, setServerReview] = useState<ApiReview | null>(null);
   const [status, setStatus] = useState(token ? "session ready" : "sign in to save reviews");
+  const [menuOpen, setMenuOpen] = useState(false);
 
   const selected = disciplines.find((discipline) => discipline.id === activeDiscipline) ?? disciplines[0];
 
@@ -142,10 +144,20 @@ function App() {
           <a className="brand" href="#console" aria-label="otherEND home">
             <img src="/brand/otherend-main.png" alt="otherEND" />
           </a>
-          <nav>
-            <a href="#review">review</a>
-            <a href="#artifacts">artifacts</a>
-            <a href="#standards">standards</a>
+          <button
+            className="menu-button"
+            type="button"
+            aria-controls="app-nav"
+            aria-expanded={menuOpen}
+            onClick={() => setMenuOpen((open) => !open)}
+          >
+            <Menu size={18} aria-hidden="true" />
+            menu
+          </button>
+          <nav id="app-nav" className={menuOpen ? "is-open" : ""}>
+            <a href="#review" onClick={() => setMenuOpen(false)}>review</a>
+            <a href="#artifacts" onClick={() => setMenuOpen(false)}>artifacts</a>
+            <a href="#standards" onClick={() => setMenuOpen(false)}>standards</a>
           </nav>
           <button className="icon-button" aria-label="export review" onClick={exportReview}>
             <Download size={18} aria-hidden="true" />

@@ -92,7 +92,7 @@ function generateReview(brief) {
   const hasAuth = /auth|login|user|member|team|role|permission|tenant/i.test(cleanBrief);
   const hasPayments = /payment|stripe|subscription|billing|invoice|plan/i.test(cleanBrief);
   const hasFiles = /file|upload|storage|document|image|attachment/i.test(cleanBrief);
-  const hasAi = /ai|summary|model|prompt|agent|llm/i.test(cleanBrief);
+  const hasModelWork = /summary|model|prompt|agent|llm/i.test(cleanBrief);
   const controls = [
     "define service boundaries before implementation",
     "validate every request body and query parameter",
@@ -104,7 +104,7 @@ function generateReview(brief) {
   if (hasAuth) controls.push("enforce role-based access and object ownership checks");
   if (hasPayments) controls.push("isolate billing webhooks and verify event signatures");
   if (hasFiles) controls.push("scan uploads and keep storage access server-authorized");
-  if (hasAi) controls.push("log model decisions without storing secrets or private prompts");
+  if (hasModelWork) controls.push("log model decisions without storing secrets or private prompts");
   const blockers = [
     "no production deploy until secret scanning is enabled",
     "no release without negative-path tests for authorization failures",

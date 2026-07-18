@@ -1,6 +1,6 @@
 :root {
   color-scheme: light;
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Arial, Helvetica, sans-serif;
   background: #f4f5f7;
   color: #0b0c0f;
   font-synthesis: none;
@@ -94,6 +94,21 @@ main {
   color: #dce1e8;
   font-size: 0.92rem;
   font-weight: 700;
+}
+
+.menu-button {
+  display: none;
+  min-height: 40px;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  border: 1px solid #2b2b2b;
+  border-radius: 6px;
+  background: #0e0e10;
+  color: #fff;
+  padding: 0 12px;
+  font-weight: 800;
+  cursor: pointer;
 }
 
 .topbar nav a {
@@ -472,13 +487,14 @@ textarea:focus {
   height: 112px;
   place-items: center;
   border-radius: 50%;
-  background: conic-gradient(var(--blue) var(--score), #e8ebf0 0);
+  border: 10px solid var(--blue);
+  background: #e8ebf0;
 }
 
 .score-ring div {
   display: grid;
-  width: 84px;
-  height: 84px;
+  width: 76px;
+  height: 76px;
   place-items: center;
   border-radius: 50%;
   background: var(--paper);
@@ -770,8 +786,30 @@ textarea:focus {
     grid-template-columns: 1fr auto;
   }
 
+  .menu-button {
+    display: inline-flex;
+  }
+
   .topbar nav {
+    position: absolute;
+    left: 12px;
+    right: 12px;
+    top: calc(100% + 8px);
     display: none;
+    flex-direction: column;
+    align-items: stretch;
+    border: 1px solid #1f1f1f;
+    border-radius: 8px;
+    background: #000;
+    padding: 8px;
+  }
+
+  .topbar nav.is-open {
+    display: flex;
+  }
+
+  .topbar nav a {
+    min-height: 46px;
   }
 
   .console-grid {
