@@ -33,6 +33,26 @@ SESSION_SECRET=replace-with-a-long-random-secret
 
 without `DATABASE_URL`, local development falls back to `.data/db.json`. vercel without `DATABASE_URL` uses temporary serverless storage only, so set postgres before treating the app as production.
 
+## stripe payments
+
+paid access is designed around stripe checkout. the app has a checkout endpoint at `/api/billing/checkout`.
+
+set these environment variables in vercel:
+
+```bash
+APP_URL=https://otherend-app.vercel.app
+STRIPE_SECRET_KEY=sk_live_or_test_key
+STRIPE_PRICE_PRO=price_id_for_paid_monthly_plan
+STRIPE_WEBHOOK_SECRET=whsec_for_subscription_webhook
+```
+
+current behavior:
+
+- free tier reviews ideas and uploaded zip files, then explains risks and fixes
+- paid tier shows the otai corrected approach, safer code plan, tests, and stronger build prompt
+- stripe checkout opens when `STRIPE_SECRET_KEY` and `STRIPE_PRICE_PRO` are configured
+- subscription enforcement still needs the stripe webhook to mark users as paid in the database
+
 ## product surface
 
 - project intake for software ideas
@@ -42,6 +62,9 @@ without `DATABASE_URL`, local development falls back to `.data/db.json`. vercel 
 - database implementation review
 - generated engineering artifacts
 - export-ready implementation brief
+- zip code structure scan
+- free and paid review modes
+- stripe checkout setup endpoint
 
 ## backend included
 

@@ -10,7 +10,7 @@ const starterBrief =
 const guideSteps = [
   {
     title: "what otherend does",
-    body: "describe the app you want to build. otherend checks the parts most vibe-built products miss: backend, database, security, testing, and launch risk.",
+    body: "describe the app you want to build or upload a zip of existing code. otai, the otherend ai reviewer, checks the parts most vibe-built products miss.",
   },
   {
     title: "start with the brief",
@@ -18,11 +18,11 @@ const guideSteps = [
   },
   {
     title: "run the review",
-    body: "press save and review. otherend turns your idea into clear fixes, risks, and a simple readiness score before you build or ship.",
+    body: "press save and check. otai turns your idea or code zip into clear fixes, risks, and a simple readiness score before you build or ship.",
   },
   {
     title: "use the output",
-    body: "copy the implementation prompt into cursor, claude, codex, or any coding tool. export gives you a handoff document for yourself or a developer.",
+    body: "free explains what is wrong. paid drafts the corrected approach and stronger build prompt for cursor, claude, codex, or any coding tool.",
   },
 ];
 
@@ -31,6 +31,19 @@ type ApiReview = {
   controls: string[];
   blockers: string[];
   implementationPrompt: string;
+  tier?: "free" | "paid";
+  paidFixes?: string[];
+  codeScan?: CodeScan | null;
+};
+
+type CodeScan = {
+  fileName: string;
+  size: number;
+  fileCount: number;
+  sampleFiles: string[];
+  findings: string[];
+  warnings: string[];
+  reviewContext: string;
 };
 
 type ApiProject = {
@@ -54,6 +67,8 @@ function App() {
   const [menuOpen, setMenuOpen] = useState(false);
   const [guideOpen, setGuideOpen] = useState(() => localStorage.getItem("otherend_guide_seen") !== "yes");
   const [guideStep, setGuideStep] = useState(0);
+  const [tier, setTier] = useState<"free" | "paid">("free");
+  const [codeScan, setCodeScan] = useState<CodeScan | null>(null);
 
   const selected = disciplines.find((discipline) => discipline.id === activeDiscipline) ?? disciplines[0];
 
@@ -70,10 +85,12 @@ function App() {
 
   const nextStep = useMemo(() => {
     if (!token) return "enter an email and sign in. this lets otherend remember your projects and reviews.";
-    if (!projectId) return "describe what you want to build, then press save and review.";
+    if (!projectId) return "describe what you want to build, or upload a zip of existing code, then press save and check.";
     if (!serverReview) return "your project is saved. press save and review again if you changed the brief.";
-    return "read the fixes, then copy the prompt into your coding tool or export the review.";
-  }, [projectId, serverReview, token]);
+    return tier === "paid"
+      ? "read otai's corrected approach, then copy the build prompt or export the handoff."
+      : "read the risks and fixes. switch to paid when you want otai to draft the corrected approach.";
+  }, [projectId, serverReview, tier, token]);
 
   useEffect(() => {
     fetch("/api/health")
@@ -154,9 +171,10 @@ function App() {
       }
 
       setStatus("checking the build for backend, database, security, testing, and launch issues...");
-      const reviewed = await api(`/api/projects/${activeProjectId}/review`, { method: "POST" }).then((response) =>
-        response.json(),
-      );
+      const reviewed = await api(`/api/projects/${activeProjectId}/review`, {
+        method: "POST",
+        body: JSON.stringify({ tier, codeScan }),
+      }).then((response) => response.json());
       setServerReview(reviewed.review);
       setStatus("review complete. otherend found what is ready, what needs fixing, and what to do next.");
       await refreshWorkspace();
@@ -188,6 +206,50 @@ function App() {
       `build this project with production engineering standards:\n\n${brief}\n\ninclude architecture, backend contracts, security controls, testing, deployment, and release readiness.`;
     await navigator.clipboard.writeText(prompt);
     setStatus("build prompt copied. paste it into your coding tool so it builds from the reviewed plan.");
+  }
+
+  async function scanZip(file: File | null) {
+    if (!file) return;
+    if (!file.name.toLowerCase().endsWith(".zip")) {
+      setStatus("upload a .zip file so otai can inspect the project structure.");
+      return;
+    }
+    setStatus("reading your zip file...");
+    const base64 = await new Promise<string>((resolveFile, reject) => {
+      const reader = new FileReader();
+      reader.onload = () => resolveFile(String(reader.result || ""));
+      reader.onerror = () => reject(new Error("could not read zip file"));
+      reader.readAsDataURL(file);
+    });
+    try {
+      setStatus("otai is scanning the uploaded code structure...");
+      const response = await api("/api/code-scan", {
+        method: "POST",
+        body: JSON.stringify({ fileName: file.name, base64 }),
+      }).then((bodyResponse) => bodyResponse.json());
+      setCodeScan(response.scan);
+      setStatus(`code scan ready. otai found ${response.scan.fileCount} files and ${response.scan.warnings.length} warning areas.`);
+    } catch (error) {
+      setStatus(error instanceof Error ? error.message : "zip scan failed");
+    }
+  }
+
+  async function startPaidCheckout() {
+    try {
+      setStatus("checking stripe checkout...");
+      const body = await api("/api/billing/checkout", {
+        method: "POST",
+        body: JSON.stringify({ email }),
+      }).then((response) => response.json());
+      if (body.url) {
+        setStatus("opening stripe checkout for paid otai review...");
+        window.location.href = body.url;
+        return;
+      }
+      setStatus(body.message || "stripe is not connected yet. add payment keys before taking paid users.");
+    } catch (error) {
+      setStatus(error instanceof Error ? error.message : "stripe checkout failed");
+    }
   }
 
   function closeGuide() {
@@ -239,12 +301,12 @@ function App() {
             <p className="eyebrow">review workspace</p>
             <h1>know what is wrong before you build.</h1>
             <p className="lede">
-              describe your app in normal language. otherend checks the backend, database, security,
+              describe your app in normal language or upload a zip of code. otai checks the backend, database, security,
               testing, and launch risks so you know what to fix before code becomes a problem.
             </p>
             <div className="purpose-list" aria-label="what this app does">
               <span>1. describe the app you want</span>
-              <span>2. get a plain-language review</span>
+              <span>2. upload code if you already have it</span>
               <span>3. see what needs fixing</span>
               <span>4. copy the improved build prompt</span>
             </div>
@@ -253,7 +315,7 @@ function App() {
                 <button className="primary-action" onClick={runServerReview} title="save this brief and check backend, database, security, testing, and launch risks">
                   check my app idea
                 </button>
-                <small>checks your idea and explains what is safe, risky, or missing.</small>
+                <small>otai checks your idea or uploaded code and explains what is safe, risky, or missing.</small>
               </div>
               <div>
                 <a className="secondary-action" href="#artifacts" title="jump to the documents and reports this review creates">
@@ -368,6 +430,38 @@ function App() {
             <p className="field-help">
               write like you are explaining the app to a teammate. include users, data, payments, files, permissions, and anything sensitive.
             </p>
+            <div className="upload-panel">
+              <div>
+                <span>optional code review</span>
+                <strong>upload a zip if you already have code</strong>
+                <p>otai reads the project structure, finds backend/database/security signals, and adds them to the review.</p>
+              </div>
+              <label className="file-action">
+                choose zip
+                <input type="file" accept=".zip,application/zip" onChange={(event) => scanZip(event.target.files?.[0] || null)} />
+              </label>
+              {codeScan && (
+                <div className="scan-result">
+                  <strong>{codeScan.fileName}</strong>
+                  <span>{codeScan.fileCount} files scanned</span>
+                  <p>{codeScan.findings.length ? codeScan.findings.slice(0, 3).join("; ") : "otai scanned the file names and project structure."}</p>
+                  {codeScan.warnings.length > 0 && <p>watchlist: {codeScan.warnings.slice(0, 2).join("; ")}</p>}
+                </div>
+              )}
+            </div>
+            <div className="tier-panel" aria-label="review tier">
+              <button className={tier === "free" ? "is-selected" : ""} type="button" onClick={() => setTier("free")}>
+                <strong>free review</strong>
+                <span>find risks, missing pieces, and what to fix before launch.</span>
+              </button>
+              <button className={tier === "paid" ? "is-selected" : ""} type="button" onClick={() => setTier("paid")}>
+                <strong>paid otai draft</strong>
+                <span>draft the corrected approach, safer plan, tests, and build prompt.</span>
+              </button>
+            </div>
+            <button className="billing-action" type="button" onClick={startPaidCheckout}>
+              set up paid access with stripe
+            </button>
             <div className="prompt-footer">
               <span>{brief.length} characters ready to review</span>
               <button onClick={copyPrompt} title="copy a coding-agent prompt based on this brief and the review standards">
@@ -396,7 +490,7 @@ function App() {
               ))}
             </div>
             <div className="generated-brief">
-              <strong>review output</strong>
+              <strong>otai review output</strong>
               <p>
                 for "{briefSummary}", otherend explains what should be fixed or planned before this
                 becomes production software.
@@ -410,6 +504,18 @@ function App() {
                     <li key={blocker}>{blocker}</li>
                   ))}
                 </ul>
+              )}
+              {serverReview?.paidFixes?.length ? (
+                <div className="paid-fixes">
+                  <strong>paid corrected approach</strong>
+                  <ul>
+                    {serverReview.paidFixes.map((fix) => (
+                      <li key={fix}>{fix}</li>
+                    ))}
+                  </ul>
+                </div>
+              ) : (
+                <p className="paid-note">paid tier adds otai-drafted corrected approach, safer code plan, tests, and handoff notes.</p>
               )}
             </div>
           </div>
