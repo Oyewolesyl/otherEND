@@ -158,7 +158,7 @@ function App() {
             <a href="#review" onClick={() => setMenuOpen(false)}>review</a>
             <a href="#artifacts" onClick={() => setMenuOpen(false)}>artifacts</a>
             <a href="#standards" onClick={() => setMenuOpen(false)}>standards</a>
-            <a href="https://other-en-dlandingsite.vercel.app/" onClick={() => setMenuOpen(false)}>landing</a>
+            <a href="https://otherend.vercel.app/" onClick={() => setMenuOpen(false)}>landing</a>
           </nav>
           <button className="icon-button" aria-label="export review" onClick={exportReview}>
             <Download size={18} aria-hidden="true" />
