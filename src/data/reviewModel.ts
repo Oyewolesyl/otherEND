@@ -63,7 +63,7 @@ export const disciplines: Discipline[] = [
     icon: ShieldCheck,
     title: "security engineer",
     role: "threat models the project before production risk appears",
-    verdict: "auth, authorization, secrets, abuse controls, and OWASP risks are mapped to controls.",
+    verdict: "auth, authorization, secrets, abuse controls, and owasp risks are mapped to controls.",
     checks: ["rbac policy", "secret handling", "rate limits", "owasp coverage"],
     score: 84,
   },
@@ -112,7 +112,7 @@ export const artifacts: Artifact[] = [
   {
     icon: LockKeyhole,
     title: "security control plan",
-    description: "threat model, OWASP coverage, rate limits, secrets policy, and authorization boundaries.",
+    description: "threat model, owasp coverage, rate limits, secrets policy, and authorization boundaries.",
     status: "needs review",
   },
   {

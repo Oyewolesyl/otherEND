@@ -158,6 +158,7 @@ function App() {
             <a href="#review" onClick={() => setMenuOpen(false)}>review</a>
             <a href="#artifacts" onClick={() => setMenuOpen(false)}>artifacts</a>
             <a href="#standards" onClick={() => setMenuOpen(false)}>standards</a>
+            <a href="https://other-en-dlandingsite.vercel.app/" onClick={() => setMenuOpen(false)}>landing</a>
           </nav>
           <button className="icon-button" aria-label="export review" onClick={exportReview}>
             <Download size={18} aria-hidden="true" />
@@ -167,12 +168,12 @@ function App() {
         <section className="console-grid" id="console">
           <div className="intro-panel">
             <p className="eyebrow">
-              engineering intelligence as a service
+              software engineering review
             </p>
-            <h1>turn raw software builds into production-ready engineering.</h1>
+            <h1>review software before it reaches production.</h1>
             <p className="lede">
-              otherend sits above coding tools and checks whether the system is secure, maintainable,
-              scalable, testable, and ready to ship.
+              otherend sits above the build process and checks whether the system is secure,
+              maintainable, scalable, testable, and ready to ship.
             </p>
             <div className="cta-row">
               <button className="primary-action" onClick={runServerReview}>
@@ -182,6 +183,11 @@ function App() {
               <a className="secondary-action" href="#artifacts">
                 view artifacts
               </a>
+            </div>
+            <div className="proof-row" aria-label="review promises">
+              <span>backend standards</span>
+              <span>security controls</span>
+              <span>release decision</span>
             </div>
           </div>
 
@@ -219,6 +225,10 @@ function App() {
                 <strong>24</strong>
                 <span>tests required</span>
               </div>
+            </div>
+            <div className="decision-row">
+              <span>ship decision</span>
+              <strong>{serverReview && serverReview.blockers.length === 0 ? "ready" : "needs review"}</strong>
             </div>
             <div className="review-note">
               <span>current review</span>
@@ -258,7 +268,7 @@ function App() {
               </span>
               <div>
                 <p className="eyebrow">project intake</p>
-                <h2>describe what the coding model is about to build</h2>
+                <h2>describe the product build</h2>
               </div>
             </div>
             <textarea
@@ -268,7 +278,7 @@ function App() {
               rows={8}
             />
             <div className="prompt-footer">
-              <span>{brief.length} chars analyzed</span>
+              <span>{brief.length} characters reviewed</span>
               <button onClick={copyPrompt}>
                 <Clipboard size={17} aria-hidden="true" />
                 copy implementation prompt

@@ -10,6 +10,7 @@
   --paper: #ffffff;
   --soft: #f7f8fa;
   --line: #dde1e7;
+  --line-strong: #c8ced8;
   --blue: #0872ff;
   --silver: #dce1e8;
   --red: #b42318;
@@ -70,6 +71,7 @@ main {
   border: 1px solid #111;
   border-radius: 8px;
   background: #000;
+  box-shadow: 0 14px 36px rgba(0, 0, 0, 0.12);
 }
 
 .brand {
@@ -161,6 +163,7 @@ main {
   flex-direction: column;
   justify-content: flex-end;
   padding: clamp(22px, 4vw, 42px);
+  border-color: var(--line-strong);
 }
 
 .eyebrow {
@@ -246,6 +249,35 @@ h3 {
   background: var(--paper);
   color: var(--ink);
   padding: 0 15px;
+}
+
+.primary-action:hover {
+  background: #005fd6;
+  border-color: #005fd6;
+}
+
+.secondary-action:hover,
+.prompt-footer button:hover {
+  border-color: var(--line-strong);
+  background: #f0f3f8;
+}
+
+.proof-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 18px;
+}
+
+.proof-row span {
+  min-height: 34px;
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  background: var(--soft);
+  padding: 8px 10px;
+  color: #303642;
+  font-size: 0.84rem;
+  font-weight: 800;
 }
 
 .system-panel {
@@ -340,6 +372,27 @@ h3 {
   font-weight: 800;
 }
 
+.decision-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-top: 14px;
+  border-top: 1px solid rgba(255, 255, 255, 0.14);
+  padding-top: 14px;
+}
+
+.decision-row span {
+  color: #c5ccd6;
+  font-size: 0.8rem;
+  font-weight: 800;
+}
+
+.decision-row strong {
+  color: #fff;
+  font-size: 1.24rem;
+}
+
 .review-note {
   margin-top: 16px;
   border: 1px solid rgba(255, 255, 255, 0.14);
@@ -387,6 +440,7 @@ h3 {
   align-items: center;
   gap: 18px;
   margin-top: 18px;
+  border-color: var(--line-strong);
 }
 
 .auth-controls {
@@ -589,7 +643,7 @@ textarea:focus {
 .discipline-card:hover,
 .discipline-card.is-active {
   border-color: rgba(8, 114, 255, 0.46);
-  background: #f7fbff;
+  background: #f3f8ff;
 }
 
 .discipline-card strong,
@@ -780,7 +834,13 @@ textarea:focus {
   }
 
   .topbar {
-    grid-template-columns: 1fr auto;
+    grid-template-columns: minmax(0, 1fr) auto auto;
+    gap: 8px;
+    padding: 8px;
+  }
+
+  .brand {
+    width: clamp(124px, 40vw, 158px);
   }
 
   .menu-button {
