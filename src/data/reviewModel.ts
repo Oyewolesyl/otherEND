@@ -54,10 +54,10 @@ export const disciplines: Discipline[] = [
   },
   {
     id: "qa",
-    title: "testing plan",
-    role: "checks whether the important user flows can be trusted",
-    verdict: "the review calls out the happy paths, failure paths, login boundaries, and release checks to test.",
-    checks: ["important flows", "what can fail", "permission tests", "launch checks"],
+    title: "quality tester",
+    role: "checks what a human should test and what software should test automatically",
+    verdict: "the review creates manual test steps for real users and automated test coverage for repeatable confidence.",
+    checks: ["manual test script", "automated test plan", "failure paths", "regression checks"],
     score: 79,
   },
   {
@@ -100,6 +100,11 @@ export const artifacts: Artifact[] = [
     status: "ready",
   },
   {
+    title: "quality test plan",
+    description: "manual checks a person should click through and automated checks that should run before future releases.",
+    status: "ready",
+  },
+  {
     title: "build prompt",
     description: "a stronger prompt you can paste into the coding tool your team already uses.",
     status: "ready",
@@ -130,7 +135,7 @@ export const risks: Risk[] = [
   {
     label: "the build may only test the happy path",
     severity: "medium",
-    control: "test bad inputs, blocked users, rate limits, permissions, and failed payments",
+    control: "create manual checks and automated tests for bad inputs, blocked users, rate limits, permissions, and failed payments",
   },
 ];
 
@@ -139,6 +144,7 @@ export const workflow = [
   "spot missing decisions",
   "shape the backend and database plan",
   "check security and user permissions",
+  "create manual and automated quality tests",
   "create the build prompt and handoff",
   "decide what is ready and what needs fixing",
 ];
@@ -148,6 +154,7 @@ export const standards = [
   { label: "permissions", value: "who can see, edit, delete, invite, export, or bill" },
   { label: "abuse controls", value: "rate limits, activity logs, and suspicious behavior checks" },
   { label: "database", value: "records, relationships, indexes, migrations, and retention" },
-  { label: "testing", value: "important flows, failure cases, permissions, and payments" },
+  { label: "manual testing", value: "real user checks, confusing flows, failed states, mobile use, and release confidence" },
+  { label: "automated testing", value: "browser tests, api tests, permission tests, database tests, and regression checks" },
   { label: "launch", value: "deploy checks, rollback, logs, alerts, and incident notes" },
 ];

@@ -10,7 +10,7 @@ const starterBrief =
 const guideSteps = [
   {
     title: "what otherend does",
-    body: "describe the app you want to build or upload a zip of existing code. oeai, the otherend ai reviewer, checks the parts most vibe-built products miss.",
+    body: "describe the app you want to build or upload a zip of existing code. otai, the otherend ai reviewer, checks the parts most vibe-built products miss.",
   },
   {
     title: "start with the brief",
@@ -18,7 +18,7 @@ const guideSteps = [
   },
   {
     title: "run the review",
-    body: "press save and check. oeai turns your idea or code zip into clear fixes, risks, and a simple readiness score before you build or ship.",
+    body: "press save and check. otai turns your idea or code zip into clear fixes, risks, and a simple readiness score before you build or ship.",
   },
   {
     title: "use the output",
@@ -30,6 +30,8 @@ type ApiReview = {
   readiness: number;
   controls: string[];
   blockers: string[];
+  manualTests?: string[];
+  automatedTests?: string[];
   implementationPrompt: string;
   tier?: "free" | "paid";
   paidFixes?: string[];
@@ -89,9 +91,27 @@ function App() {
     if (!projectId) return "describe what you want to build, or upload a zip of existing code, then press save and check.";
     if (!serverReview) return "your project is saved. press save and review again if you changed the brief.";
     return tier === "paid"
-      ? "read oeai's corrected approach, then copy the build prompt or export the handoff."
-      : "read the risks and fixes. switch to paid when you want oeai to draft the corrected approach.";
+      ? "read otai's corrected approach, then copy the build prompt or export the handoff."
+      : "read the risks and fixes. switch to paid when you want otai to draft the corrected approach.";
   }, [projectId, serverReview, tier, token]);
+
+  const manualTests = serverReview?.manualTests?.length
+    ? serverReview.manualTests
+    : [
+        "open the app as a new visitor and check that the first screen explains what to do",
+        "sign in and confirm the app clearly says the workspace is ready",
+        "create or review the main project idea and confirm the result is easy to understand",
+        "try bad inputs, empty fields, and mobile screen size before trusting the release",
+      ];
+
+  const automatedTests = serverReview?.automatedTests?.length
+    ? serverReview.automatedTests
+    : [
+        "browser test for sign in, project review, export, and a failed input path",
+        "api test for missing auth, bad input, saved review, and forbidden access",
+        "permission test proving one user cannot access another user's private project",
+        "regression test for every serious bug after it is fixed",
+      ];
 
   useEffect(() => {
     fetch("/api/health")
@@ -204,7 +224,7 @@ function App() {
   async function downloadCorrectedPackage() {
     try {
       if (!projectId) {
-        setStatus("run a paid oeai review first. then the corrected package can be downloaded.");
+        setStatus("run a paid otai review first. then the corrected package can be downloaded.");
         return;
       }
       const response = await api(`/api/projects/${projectId}/package`, {
@@ -217,7 +237,7 @@ function App() {
       link.download = "otherend-corrected-package.zip";
       link.click();
       URL.revokeObjectURL(url);
-      setStatus("corrected package downloaded. it contains oeai's safer approach, checklist, and build prompt.");
+      setStatus("corrected package downloaded. it contains otai's safer approach, checklist, and build prompt.");
     } catch (error) {
       setStatus(error instanceof Error ? error.message : "corrected package download failed");
     }
@@ -231,10 +251,22 @@ function App() {
     setStatus("build prompt copied. paste it into your coding tool so it builds from the reviewed plan.");
   }
 
+  async function copyQualityPlan() {
+    const plan = [
+      "manual quality tester plan",
+      ...manualTests.map((item, index) => `${index + 1}. ${item}`),
+      "",
+      "automated testing plan",
+      ...automatedTests.map((item) => `- ${item}`),
+    ].join("\n");
+    await navigator.clipboard.writeText(plan);
+    setStatus("quality tester plan copied. use it as your manual checklist and automated testing brief.");
+  }
+
   async function scanZip(file: File | null) {
     if (!file) return;
     if (!file.name.toLowerCase().endsWith(".zip")) {
-      setStatus("upload a .zip file so oeai can inspect the project structure.");
+      setStatus("upload a .zip file so otai can inspect the project structure.");
       return;
     }
     setStatus("reading your zip file...");
@@ -245,13 +277,13 @@ function App() {
       reader.readAsDataURL(file);
     });
     try {
-      setStatus("oeai is scanning the uploaded code structure...");
+      setStatus("otai is scanning the uploaded code structure...");
       const response = await api("/api/code-scan", {
         method: "POST",
         body: JSON.stringify({ fileName: file.name, base64 }),
       }).then((bodyResponse) => bodyResponse.json());
       setCodeScan(response.scan);
-      setStatus(`code scan ready. oeai found ${response.scan.fileCount} files and ${response.scan.warnings.length} warning areas.`);
+      setStatus(`code scan ready. otai found ${response.scan.fileCount} files and ${response.scan.warnings.length} warning areas.`);
     } catch (error) {
       setStatus(error instanceof Error ? error.message : "zip scan failed");
     }
@@ -259,13 +291,13 @@ function App() {
 
   async function scanGithubRepo() {
     try {
-      setStatus("oeai is downloading the public github repo for review...");
+      setStatus("otai is downloading the public github repo for review...");
       const response = await api("/api/github-scan", {
         method: "POST",
         body: JSON.stringify({ repoUrl }),
       }).then((bodyResponse) => bodyResponse.json());
       setCodeScan(response.scan);
-      setStatus(`github scan ready. oeai found ${response.scan.fileCount} files and ${response.scan.warnings.length} warning areas.`);
+      setStatus(`github scan ready. otai found ${response.scan.fileCount} files and ${response.scan.warnings.length} warning areas.`);
     } catch (error) {
       setStatus(error instanceof Error ? error.message : "github scan failed");
     }
@@ -279,7 +311,7 @@ function App() {
         body: JSON.stringify({ email }),
       }).then((response) => response.json());
       if (body.url) {
-        setStatus("opening stripe checkout for paid oeai review...");
+        setStatus("opening stripe checkout for paid otai review...");
         window.location.href = body.url;
         return;
       }
@@ -321,6 +353,7 @@ function App() {
           </button>
           <nav id="app-nav" className={menuOpen ? "is-open" : ""}>
             <a href="#review" onClick={() => setMenuOpen(false)}>start</a>
+            <a href="#quality" onClick={() => setMenuOpen(false)}>quality</a>
             <a href="#artifacts" onClick={() => setMenuOpen(false)}>outputs</a>
             <a href="#standards" onClick={() => setMenuOpen(false)}>checks</a>
             <a href="https://otherend.vercel.app/" onClick={() => setMenuOpen(false)}>landing</a>
@@ -338,21 +371,21 @@ function App() {
             <p className="eyebrow">review workspace</p>
             <h1>know what is wrong before you build.</h1>
             <p className="lede">
-              describe your app in normal language or upload a zip of code. oeai checks the backend, database, security,
+              describe your app in normal language or upload a zip of code. otai checks the backend, database, security,
               testing, and launch risks so you know what to fix before code becomes a problem.
             </p>
             <div className="purpose-list" aria-label="what this app does">
               <span>1. describe the app you want</span>
               <span>2. upload code if you already have it</span>
               <span>3. see what needs fixing</span>
-              <span>4. copy the improved build prompt</span>
+              <span>4. run manual and automated test plans</span>
             </div>
             <div className="cta-row action-row">
               <div>
                 <button className="primary-action" onClick={runServerReview} title="save this brief and check backend, database, security, testing, and launch risks">
                   check my app idea
                 </button>
-                <small>oeai checks your idea or uploaded code and explains what is safe, risky, or missing.</small>
+                <small>otai checks your idea or uploaded code and explains what is safe, risky, or missing.</small>
               </div>
               <div>
                 <a className="secondary-action" href="#artifacts" title="jump to the documents and reports this review creates">
@@ -364,7 +397,7 @@ function App() {
             <div className="proof-row" aria-label="review promises">
               <span>database plan</span>
               <span>security checks</span>
-              <span>launch advice</span>
+              <span>quality testing</span>
             </div>
           </div>
 
@@ -471,7 +504,7 @@ function App() {
               <div>
                 <span>optional code review</span>
                 <strong>upload a zip or scan a public github repo</strong>
-                <p>oeai reads project structure, finds backend/database/security signals, and adds them to the review. your code is reviewed for guidance, not published.</p>
+                <p>otai reads project structure, finds backend/database/security signals, and adds them to the review. your code is reviewed for guidance, not published.</p>
               </div>
               <label className="file-action">
                 choose zip
@@ -490,7 +523,7 @@ function App() {
                 <div className="scan-result">
                   <strong>{codeScan.fileName}</strong>
                   <span>{codeScan.fileCount} files scanned</span>
-                  <p>{codeScan.findings.length ? codeScan.findings.slice(0, 3).join("; ") : "oeai scanned the file names and project structure."}</p>
+                  <p>{codeScan.findings.length ? codeScan.findings.slice(0, 3).join("; ") : "otai scanned the file names and project structure."}</p>
                   {codeScan.warnings.length > 0 && <p>watchlist: {codeScan.warnings.slice(0, 2).join("; ")}</p>}
                 </div>
               )}
@@ -498,11 +531,11 @@ function App() {
             <div className="tier-panel" aria-label="review tier">
               <button className={tier === "free" ? "is-selected" : ""} type="button" onClick={() => setTier("free")}>
                 <strong>free review</strong>
-                <span>3 reviews per month. idea, zip, or public github review with risks and fixes.</span>
+                <span>3 reviews per month. idea, zip, or public github review with risks, fixes, and manual test checklist.</span>
               </button>
               <button className={tier === "paid" ? "is-selected" : ""} type="button" onClick={() => setTier("paid")}>
-                <strong>pro oeai draft</strong>
-                <span>unlimited reviews, corrected approach, safer plan, tests, build prompt, and package download.</span>
+                <strong>pro otai draft</strong>
+                <span>unlimited reviews, corrected approach, automated test plan, safer build prompt, and package download.</span>
               </button>
             </div>
             <button className="billing-action" type="button" onClick={startPaidCheckout}>
@@ -539,7 +572,7 @@ function App() {
               ))}
             </div>
             <div className="generated-brief">
-              <strong>oeai review output</strong>
+              <strong>otai review output</strong>
               <p>
                 for "{briefSummary}", otherend explains what should be fixed or planned before this
                 becomes production software.
@@ -564,9 +597,45 @@ function App() {
                   </ul>
                 </div>
               ) : (
-                <p className="paid-note">paid tier adds oeai-drafted corrected approach, safer code plan, tests, and handoff notes.</p>
+                <p className="paid-note">paid tier adds otai-drafted corrected approach, safer code plan, tests, and handoff notes.</p>
               )}
             </div>
+          </div>
+        </section>
+
+        <section className="quality-section" id="quality">
+          <div className="section-heading">
+            <p className="eyebrow">quality tester</p>
+            <h2>manual checks for humans. automated checks for every future change.</h2>
+          </div>
+          <div className="quality-grid">
+            <article>
+              <span>manual testing</span>
+              <strong>what a person should click before launch</strong>
+              <ol>
+                {manualTests.map((test) => (
+                  <li key={test}>{test}</li>
+                ))}
+              </ol>
+            </article>
+            <article>
+              <span>automated testing</span>
+              <strong>what should run again and again</strong>
+              <ul>
+                {automatedTests.map((test) => (
+                  <li key={test}>{test}</li>
+                ))}
+              </ul>
+            </article>
+          </div>
+          <div className="quality-actions">
+            <p>
+              free gives a clear quality tester checklist. paid adds a fuller corrected testing package
+              for browser tests, api tests, database checks, permission checks, and regression coverage.
+            </p>
+            <button className="secondary-action" type="button" onClick={copyQualityPlan}>
+              copy quality tester plan
+            </button>
           </div>
         </section>
 
