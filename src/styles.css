@@ -1273,3 +1273,131 @@ textarea:focus {
     width: 16px;
   }
 }
+
+/* final product polish: make the app feel like a tool, not a stack of heavy cards */
+.intro-panel,
+.system-panel,
+.brief-panel,
+.review-panel,
+.pipeline-panel,
+.risk-panel,
+.artifact-section,
+.standards-section,
+.database-section,
+.ship-panel {
+  box-shadow: 0 22px 70px rgba(0, 0, 0, 0.18);
+}
+
+.system-panel {
+  background:
+    linear-gradient(180deg, rgba(8, 114, 255, 0.08), rgba(255, 255, 255, 0) 32%),
+    #050505;
+}
+
+.gate-stack article,
+.discipline-card,
+.timeline li,
+.risk-item,
+.artifact-card,
+.standards-grid article,
+.database-grid article {
+  background: #0b0c0e;
+}
+
+@media (max-width: 720px) {
+  .topbar {
+    position: static;
+    margin-bottom: 12px;
+    border-radius: 8px;
+  }
+
+  .shell {
+    padding: 10px 12px 26px;
+  }
+
+  .console-grid {
+    padding-top: 0;
+  }
+
+  .intro-panel,
+  .system-panel,
+  .brief-panel,
+  .review-panel,
+  .auth-panel,
+  .activity-panel,
+  .pipeline-panel,
+  .risk-panel,
+  .artifact-section,
+  .standards-section,
+  .database-section,
+  .ship-panel {
+    border-left: 0;
+    border-right: 0;
+    border-radius: 0;
+    padding-inline: 0;
+    background: transparent;
+    box-shadow: none;
+  }
+
+  .intro-panel,
+  .system-panel {
+    min-height: auto;
+    padding-block: 24px;
+  }
+
+  .intro-panel h1 {
+    font-size: clamp(2.35rem, 12vw, 3.75rem);
+  }
+
+  .purpose-list span,
+  .proof-row span {
+    border-top: 1px solid var(--line);
+    padding-top: 10px;
+  }
+
+  .live-badge {
+    position: static;
+    width: fit-content;
+    margin-top: 18px;
+  }
+
+  .gate-stack {
+    margin-top: 24px;
+  }
+
+  .signal-grid {
+    display: none;
+  }
+
+  .discipline-card {
+    min-height: auto;
+    padding: 14px;
+  }
+
+  .discipline-card b {
+    font-size: 1rem;
+  }
+
+  .split-section {
+    gap: 14px;
+  }
+
+  .timeline li,
+  .risk-item,
+  .artifact-card,
+  .database-grid article,
+  .standards-grid article {
+    min-height: auto;
+  }
+
+  textarea {
+    min-height: 240px;
+  }
+
+  .upload-panel,
+  .tier-panel,
+  .generated-brief,
+  .review-note {
+    border-radius: 8px;
+  }
+}
