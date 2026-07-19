@@ -50,7 +50,7 @@ current behavior:
 
 - free tier reviews ideas, uploaded zip files, and public github repos, then explains risks and fixes
 - free tier should be enforced as 3 reviews per month once subscription/account limits are connected
-- paid tier shows the otai corrected approach, safer code plan, tests, stronger build prompt, and corrected package zip
+- paid tier shows the oeai corrected approach, safer code plan, tests, stronger build prompt, and corrected package zip
 - stripe checkout opens when `STRIPE_SECRET_KEY` and `STRIPE_PRICE_PRO` are configured
 - subscription enforcement still needs the stripe webhook to mark users as paid in the database
 
@@ -60,7 +60,7 @@ launch behavior:
 
 - upload a `.zip` of code for review
 - paste a public github repo url for review
-- otai scans project structure and flags backend, database, security, testing, and launch signals
+- oeai scans project structure and flags backend, database, security, testing, and launch signals
 
 private github repo review is possible, but it should be added as a github app or oauth connection after launch. required env vars for that phase:
 

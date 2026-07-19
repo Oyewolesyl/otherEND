@@ -1401,3 +1401,761 @@ textarea:focus {
     border-radius: 8px;
   }
 }
+
+/* final release ui pass: clearer product workspace, less decorative dashboard styling */
+:root {
+  --ink: #f6f7f8;
+  --muted: rgba(246, 247, 248, 0.66);
+  --quiet: rgba(246, 247, 248, 0.46);
+  --bg: #000;
+  --panel: #060607;
+  --panel-soft: #0b0c0e;
+  --line: rgba(255, 255, 255, 0.12);
+  --line-strong: rgba(255, 255, 255, 0.2);
+  --blue: #0872ff;
+  --blue-soft: #a8c9ff;
+}
+
+body {
+  background:
+    linear-gradient(90deg, rgba(255, 255, 255, 0.028) 1px, transparent 1px) center top / min(15vw, 172px) 100%,
+    #000;
+  color: var(--ink);
+  font-family: "SF Pro Display", "SF Pro Text", Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  font-size: 16px;
+  letter-spacing: 0;
+  overflow-x: hidden;
+}
+
+.shell {
+  width: min(1320px, 100%);
+  padding: 0 clamp(18px, 3vw, 42px) 56px;
+}
+
+.topbar {
+  top: 0;
+  min-height: 72px;
+  margin: 0 calc(clamp(18px, 3vw, 42px) * -1);
+  padding: 12px clamp(18px, 3vw, 42px);
+  border: 0;
+  border-bottom: 1px solid var(--line);
+  border-radius: 0;
+  background: rgba(0, 0, 0, 0.94);
+  box-shadow: none;
+  backdrop-filter: blur(18px);
+}
+
+.brand {
+  width: clamp(150px, 13vw, 196px);
+}
+
+.topbar nav {
+  gap: clamp(14px, 2vw, 28px);
+  font-size: 0.86rem;
+  font-weight: 650;
+}
+
+.topbar nav a {
+  border-radius: 0;
+  padding: 0;
+  color: rgba(246, 247, 248, 0.64);
+}
+
+.topbar nav a:hover {
+  background: transparent;
+  color: #fff;
+}
+
+.menu-button,
+.guide-button,
+.export-button {
+  min-height: 42px;
+  border-radius: 6px;
+  border-color: rgba(255, 255, 255, 0.16);
+  background: transparent;
+  color: #fff;
+  font-size: 0.9rem;
+}
+
+.console-grid {
+  grid-template-columns: minmax(0, 0.94fr) minmax(340px, 0.66fr);
+  gap: clamp(22px, 3vw, 38px);
+  padding: clamp(42px, 7vw, 92px) 0 clamp(18px, 3vw, 28px);
+}
+
+.intro-panel,
+.system-panel,
+.brief-panel,
+.review-panel,
+.auth-panel,
+.activity-panel,
+.pipeline-panel,
+.risk-panel,
+.artifact-section,
+.standards-section,
+.database-section,
+.ship-panel {
+  border: 0;
+  border-top: 1px solid var(--line);
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
+}
+
+.intro-panel {
+  min-height: auto;
+  justify-content: center;
+  padding: clamp(18px, 3vw, 34px) 0;
+}
+
+.eyebrow {
+  color: var(--blue);
+  font-size: 0.76rem;
+  font-weight: 760;
+  letter-spacing: 0.16em;
+}
+
+.intro-panel h1 {
+  max-width: 820px;
+  margin: 16px 0 24px;
+  color: #fff;
+  font-size: clamp(3.6rem, 6.7vw, 6.7rem);
+  font-weight: 765;
+  letter-spacing: 0;
+  line-height: 0.9;
+}
+
+.lede,
+.field-help,
+.review-note p,
+.selected-verdict,
+.generated-brief p,
+.activity-panel p,
+.database-summary p,
+.upload-panel p,
+.tier-panel span,
+.artifact-card p,
+.standards-grid p,
+.database-grid p,
+.ship-panel p,
+.risk-item p,
+.timeline p {
+  color: var(--muted);
+  font-size: 1rem;
+  line-height: 1.62;
+}
+
+.lede {
+  max-width: 720px;
+  font-size: clamp(1.05rem, 1.25vw, 1.22rem);
+}
+
+.purpose-list,
+.proof-row {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 0;
+  margin-top: 30px;
+  border-top: 1px solid var(--line);
+}
+
+.purpose-list span,
+.proof-row span {
+  border: 0;
+  border-right: 1px solid var(--line);
+  border-radius: 0;
+  padding: 16px 18px 16px 0;
+  background: transparent;
+  color: rgba(246, 247, 248, 0.72);
+  font-size: 0.9rem;
+}
+
+.purpose-list span:last-child,
+.proof-row span:last-child {
+  border-right: 0;
+}
+
+.action-row {
+  margin-top: 32px;
+}
+
+.action-row > div {
+  display: grid;
+  gap: 10px;
+}
+
+.action-row small {
+  color: var(--quiet);
+  line-height: 1.45;
+}
+
+.primary-action,
+.secondary-action,
+.billing-action,
+.prompt-footer button,
+.file-action,
+.repo-action button,
+.guide-actions button,
+.tier-panel button {
+  min-height: 48px;
+  border-radius: 6px;
+  font-weight: 720;
+}
+
+.primary-action {
+  border: 1px solid var(--blue);
+  background: var(--blue);
+  color: #fff;
+}
+
+.secondary-action,
+.prompt-footer button,
+.file-action,
+.repo-action button,
+.billing-action {
+  border: 1px solid var(--line-strong);
+  background: transparent;
+  color: #fff;
+}
+
+.system-panel {
+  display: flex;
+  min-height: auto;
+  flex-direction: column;
+  justify-content: center;
+  padding: clamp(18px, 3vw, 34px) 0;
+}
+
+.system-panel::before,
+.system-panel::after {
+  content: none;
+}
+
+.live-badge {
+  position: static;
+  width: fit-content;
+  margin-bottom: 22px;
+  border: 0;
+  border-bottom: 1px solid var(--blue);
+  border-radius: 0;
+  padding: 0 0 8px;
+  background: transparent;
+  color: #fff;
+}
+
+.system-head h2,
+.auth-panel h2,
+.section-title h2,
+.section-heading h2,
+.ship-panel h2 {
+  margin: 10px 0 0;
+  color: #fff;
+  font-size: clamp(2rem, 3.5vw, 3.9rem);
+  font-weight: 745;
+  line-height: 0.98;
+  letter-spacing: 0;
+}
+
+.gate-stack {
+  display: grid;
+  margin-top: 28px;
+  border-top: 1px solid var(--line);
+}
+
+.gate-stack article,
+.discipline-card,
+.timeline li,
+.risk-item,
+.artifact-card,
+.standards-grid article,
+.database-grid article {
+  border: 0;
+  border-bottom: 1px solid var(--line);
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
+}
+
+.gate-stack article {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+  min-height: 58px;
+  padding: 0;
+}
+
+.gate-stack article span {
+  color: rgba(246, 247, 248, 0.82);
+  font-weight: 650;
+}
+
+.gate-stack article strong {
+  color: var(--blue-soft);
+  font-size: 1rem;
+}
+
+.signal-grid {
+  display: none;
+}
+
+.decision-row,
+.review-note,
+.database-summary,
+.activity-panel,
+.upload-panel,
+.tier-panel,
+.generated-brief,
+.scan-result,
+.paid-fixes {
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.025);
+}
+
+.decision-row {
+  margin-top: 22px;
+  padding: 16px;
+}
+
+.review-note {
+  margin-top: 12px;
+  padding: 16px;
+}
+
+.auth-panel,
+.activity-panel,
+.workbench,
+.split-section,
+.discipline-strip,
+.artifact-section,
+.database-section,
+.standards-section,
+.ship-panel {
+  margin-top: clamp(18px, 3vw, 32px);
+}
+
+.auth-panel {
+  display: grid;
+  grid-template-columns: minmax(0, 0.7fr) minmax(300px, 0.45fr) minmax(320px, 0.65fr);
+  gap: 22px;
+  align-items: start;
+  padding: 30px 0;
+}
+
+.database-summary,
+.auth-controls,
+.activity-panel {
+  padding: 18px;
+}
+
+.auth-controls {
+  display: grid;
+  gap: 10px;
+}
+
+input,
+textarea {
+  border: 1px solid var(--line-strong);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.035);
+  color: #fff;
+  outline: none;
+}
+
+input:focus,
+textarea:focus {
+  border-color: rgba(8, 114, 255, 0.85);
+  box-shadow: 0 0 0 3px rgba(8, 114, 255, 0.16);
+}
+
+.activity-panel {
+  grid-template-columns: minmax(220px, 0.42fr) minmax(0, 1fr);
+}
+
+.activity-panel span,
+.database-summary span,
+.upload-panel span,
+.review-note span {
+  color: var(--blue-soft);
+  font-size: 0.78rem;
+  font-weight: 730;
+  letter-spacing: 0.1em;
+}
+
+.activity-panel strong {
+  color: #fff;
+  line-height: 1.5;
+}
+
+.workbench {
+  display: grid;
+  grid-template-columns: minmax(0, 0.98fr) minmax(360px, 0.82fr);
+  gap: clamp(24px, 4vw, 52px);
+}
+
+.brief-panel,
+.review-panel {
+  padding: clamp(26px, 4vw, 44px) 0;
+}
+
+textarea {
+  min-height: 280px;
+  padding: 22px;
+  font-size: clamp(1rem, 1.2vw, 1.16rem);
+  line-height: 1.62;
+}
+
+.upload-panel,
+.tier-panel,
+.generated-brief {
+  margin-top: 22px;
+  padding: 18px;
+}
+
+.upload-panel {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 16px;
+}
+
+.repo-action {
+  grid-column: 1 / -1;
+}
+
+.tier-panel {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.tier-panel button {
+  border: 1px solid var(--line);
+  background: transparent;
+  text-align: left;
+  padding: 16px;
+}
+
+.tier-panel button.is-selected {
+  border-color: rgba(8, 114, 255, 0.75);
+  background: rgba(8, 114, 255, 0.1);
+}
+
+.billing-action {
+  width: 100%;
+  margin-top: 12px;
+}
+
+.prompt-footer {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) repeat(3, auto);
+  gap: 10px;
+  align-items: center;
+  margin-top: 18px;
+}
+
+.review-header {
+  gap: 18px;
+  border-bottom: 1px solid var(--line);
+  padding-bottom: 22px;
+}
+
+.score-ring {
+  width: 112px;
+  height: 112px;
+  background: transparent;
+}
+
+.score-ring::before {
+  background: conic-gradient(var(--blue) var(--score), rgba(255, 255, 255, 0.12) 0);
+}
+
+.score-ring strong {
+  font-size: 1.7rem;
+}
+
+.check-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.check-grid span {
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  background: rgba(255, 255, 255, 0.02);
+}
+
+.discipline-strip {
+  display: grid;
+  grid-template-columns: repeat(6, minmax(0, 1fr));
+  gap: 0;
+  border-top: 1px solid var(--line);
+}
+
+.discipline-card {
+  min-height: 170px;
+  border-right: 1px solid var(--line);
+  padding: 18px;
+  text-align: left;
+}
+
+.discipline-card:last-child {
+  border-right: 0;
+}
+
+.discipline-card.is-active {
+  background: rgba(8, 114, 255, 0.08);
+}
+
+.discipline-card strong {
+  font-size: 1.04rem;
+}
+
+.discipline-card small {
+  color: var(--muted);
+}
+
+.discipline-card b {
+  margin-top: 18px;
+  color: var(--blue-soft);
+  font-size: 0.95rem;
+}
+
+.split-section {
+  grid-template-columns: minmax(0, 0.62fr) minmax(0, 0.88fr);
+  gap: clamp(24px, 4vw, 52px);
+}
+
+.pipeline-panel,
+.risk-panel,
+.artifact-section,
+.database-section,
+.standards-section,
+.ship-panel {
+  padding: clamp(28px, 5vw, 58px) 0;
+}
+
+.timeline,
+.risk-list,
+.artifact-grid,
+.database-grid,
+.standards-grid {
+  margin-top: 28px;
+  border-top: 1px solid var(--line);
+}
+
+.timeline li {
+  min-height: auto;
+  padding: 18px 0;
+}
+
+.risk-item,
+.artifact-card,
+.database-grid article,
+.standards-grid article {
+  min-height: auto;
+  padding: 22px 0;
+}
+
+.artifact-grid,
+.database-grid,
+.standards-grid {
+  display: grid;
+  gap: 0 clamp(24px, 4vw, 54px);
+}
+
+.artifact-grid {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+
+.database-grid,
+.standards-grid {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+
+.ship-panel {
+  grid-template-columns: minmax(0, 1fr) auto;
+  border-bottom: 1px solid var(--line);
+}
+
+.guide-overlay {
+  place-items: center;
+  background: rgba(0, 0, 0, 0.74);
+}
+
+.guide-card {
+  border-radius: 10px;
+  background: #050506;
+}
+
+@media (max-width: 1080px) {
+  .console-grid,
+  .auth-panel,
+  .workbench,
+  .split-section,
+  .activity-panel,
+  .ship-panel {
+    grid-template-columns: 1fr;
+  }
+
+  .purpose-list,
+  .proof-row,
+  .discipline-strip,
+  .artifact-grid,
+  .database-grid,
+  .standards-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 720px) {
+  .shell {
+    padding: 0 18px 42px;
+  }
+
+  .topbar {
+    position: sticky;
+    top: 0;
+    grid-template-columns: minmax(0, 1fr) auto auto auto;
+    gap: 8px;
+    min-height: 66px;
+    margin: 0 -18px;
+    padding: 10px 18px;
+  }
+
+  .brand {
+    width: 138px;
+  }
+
+  .menu-button {
+    display: inline-flex;
+  }
+
+  .menu-button,
+  .guide-button,
+  .export-button {
+    min-height: 40px;
+    padding: 0 10px;
+    font-size: 0.82rem;
+  }
+
+  .topbar nav {
+    position: absolute;
+    left: 12px;
+    right: 12px;
+    top: calc(100% + 8px);
+    display: none;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0;
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    background: #000;
+    padding: 10px 14px;
+  }
+
+  .topbar nav.is-open {
+    display: flex;
+  }
+
+  .topbar nav a {
+    min-height: 42px;
+    display: flex;
+    align-items: center;
+  }
+
+  .console-grid {
+    padding: 34px 0 12px;
+  }
+
+  .intro-panel h1 {
+    font-size: clamp(3.05rem, 15vw, 5.25rem);
+  }
+
+  .lede {
+    font-size: 1.03rem;
+  }
+
+  .purpose-list,
+  .proof-row,
+  .tier-panel,
+  .check-grid,
+  .discipline-strip,
+  .artifact-grid,
+  .database-grid,
+  .standards-grid,
+  .upload-panel,
+  .prompt-footer {
+    grid-template-columns: 1fr;
+  }
+
+  .purpose-list span,
+  .proof-row span,
+  .discipline-card {
+    border-right: 0;
+  }
+
+  .system-panel {
+    padding-top: 26px;
+  }
+
+  .system-head h2,
+  .auth-panel h2,
+  .section-title h2,
+  .section-heading h2,
+  .ship-panel h2 {
+    font-size: clamp(2rem, 10vw, 3.5rem);
+  }
+
+  .auth-panel,
+  .activity-panel,
+  .brief-panel,
+  .review-panel,
+  .pipeline-panel,
+  .risk-panel,
+  .artifact-section,
+  .database-section,
+  .standards-section,
+  .ship-panel {
+    padding: 30px 0;
+  }
+
+  textarea {
+    min-height: 260px;
+    padding: 18px;
+  }
+
+  .repo-action {
+    grid-column: auto;
+    display: grid;
+    gap: 10px;
+  }
+
+  .prompt-footer button,
+  .primary-action,
+  .secondary-action,
+  .billing-action,
+  .file-action,
+  .repo-action button {
+    width: 100%;
+  }
+
+  .review-header {
+    align-items: start;
+  }
+
+  .score-ring {
+    width: 92px;
+    height: 92px;
+  }
+
+  .discipline-card {
+    min-height: auto;
+    padding: 16px 0;
+  }
+
+  .guide-card {
+    width: min(100%, 430px);
+    padding: 20px;
+  }
+}
